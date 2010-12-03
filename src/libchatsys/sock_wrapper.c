@@ -87,7 +87,7 @@ chat_server_accept_client (void)
     if (client_fd < 0) {
         return -1;
     }
-    return 0;
+    return client_fd;
 }		/* -----  end of function chat_server_accept_client  ----- */
 
 /* 
@@ -97,9 +97,9 @@ chat_server_accept_client (void)
  * =====================================================================================
  */
     int
-chat_server_close_client (void)
+chat_server_close_client (int fd)
 {
-    if (close(client_fd) < 0) {
+    if (close(fd) < 0) {
         return -1;
     }
     return 0;
@@ -112,9 +112,9 @@ chat_server_close_client (void)
  * =====================================================================================
  */
     int
-chat_server_send (const char *message, int size)
+chat_server_send (int fd, const char *message, int size)
 {
-    if (send(client_fd, message, size, 0) < 0) {
+    if (send(fd, message, size, 0) < 0) {
         return -1;
     }
     return 0;
@@ -127,9 +127,9 @@ chat_server_send (const char *message, int size)
  * =====================================================================================
  */
     int
-chat_server_recv (char *buf, int size)
+chat_server_recv (int fd, char *buf, int size)
 {
-    return recv(client_fd, buf, MAX_MSG_SIZE, 0);
+    return recv(fd, buf, MAX_MSG_SIZE, 0);
 }		/* -----  end of function chat_server_recv  ----- */
 
 /* 

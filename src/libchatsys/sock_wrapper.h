@@ -22,7 +22,7 @@
 /* #####   HEADER FILE INCLUDES   ################################################### */
 
 /* #####   MACROS  -  LOCAL TO THIS SOURCE FILE   ################################### */
-#define	SERVER_PORT 7777			/*  */
+#define	SERVER_PORT 6666			/*  */
 #define	MAX_MSG_SIZE 1024			/*  */
 
 /* #####   TYPE DEFINITIONS  -  LOCAL TO THIS SOURCE FILE   ######################### */
@@ -37,13 +37,14 @@
 int chat_server_init (void);
 int chat_server_exit (void);
 int chat_server_accept_client (void);
-int chat_server_close_client (void);
-int chat_server_send (const char *message, int size);
-int chat_server_recv (char *buf, int size);
+int chat_server_close_client (int fd);
+int chat_server_send (int fd, const char *message, int size);
+int chat_server_recv (int fd, char *buf, int size);
 
 int chat_client_init (const char *server_name);
 int chat_client_exit (void);
 int chat_client_recv (char *buf, int size);
+int chat_client_send (const char *message, int size);
 
 /* #####   FUNCTION DEFINITIONS  -  LOCAL TO THIS SOURCE FILE   ##################### */
 

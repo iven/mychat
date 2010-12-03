@@ -14,38 +14,29 @@
 #
 #===============================================================================
 
-PREFIX			= /usr
-LIBCHATSYS_DIR  = ./libchatsys
 
 CC              = gcc
-CFLAGS          = -c -g -Wall
-INCLUDES		= -I$(LIBCHATSYS_DIR)
-LFLAGS          = -g
-LIBS        	= -L$(LIBCHATSYS_DIR) -lm -lpthread -lchatsys
+CFLAGS          = -c -g -Wall -fPIC
+LFLAGS          = -g -shared
+SYS_LIBS        = 
 TARBALL_EXCLUDE = "*.{o,gz,zip}"
 ZIP_EXCLUDE     = *.o *.gz *.zip
 
-TARGETS	= tcp_client tcp_server
+TARGETS	= libchatsys.so libchatsys.so.1.0.0
 
 #---------- targets --------------------------------------
 all:	$(TARGETS)
 
 %.o:	%.c
-			$(CC) $(CFLAGS) $(INCLUDES) $*.c
+			$(CC) $(CFLAGS) $*.c
 
 #---------- target 1 -------------------------------------
-tcp_client:	tcp_client.o libchatsys.so
-			$(CC) $(LFLAGS) -o $@ $<  $(LIBS)
+libchatsys.so.1.0.0 :	parser.o sock_wrapper.o
+	$(CC) $(LFLAGS) -o $@ $^  $(SYS_LIBS)
 
 #---------- target 2 -------------------------------------
-tcp_server:	tcp_server.o libchatsys.so
-			$(CC) $(LFLAGS) -o $@ $<  $(LIBS)
-
-#---------- target 3 -------------------------------------
-libchatsys.so:
-			$(MAKE) -C $(LIBCHATSYS_DIR)
-
-
+libchatsys.so		:	libchatsys.so.1.0.0
+			ln -sf $^ $@
 
 #---------- tarball --------------------------------------
 tarball:
@@ -66,7 +57,3 @@ zip:
 clean:
 			rm  --force  $(TARGETS) $(ZIP_EXCLUDE)
  
-#---------- install -------------------------------------
-install:	all
-			install -m 644 $(LIBCHATSYS_DIR)/libchatsys.so* $(PREFIX)/lib/
-			install -m 755 $(TARGETS) $(PREFIX)/bin/
