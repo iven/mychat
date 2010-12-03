@@ -22,6 +22,7 @@
 #include    <string.h>
 #include    <sys/wait.h>
 #include    <unistd.h>
+#include	<pthread.h> 
 #include	"sock_wrapper.h" 
 
 /* 
@@ -31,18 +32,21 @@
  * =====================================================================================
  */
     static void
-recv_daemon (void)
+recv_daemon (void *fd)
 {
+    int new_fd = * (int *) fd;
     int numbytes;
     char message[MAX_MSG_SIZE];
     while(1) {
-        numbytes = chat_server_recv(message, MAX_MSG_SIZE);
+        numbytes = chat_server_recv(new_fd, message, MAX_MSG_SIZE);
         if (numbytes < 0) {
             perror("recv");
             exit(1);
         }
+        message[numbytes] = '\0';
         printf("\nClient says: %s\n", message);
     }
+    chat_server_close_client(new_fd);
     return ;
 }		/* -----  end of static function recv_daemon  ----- */
 
@@ -53,17 +57,19 @@ recv_daemon (void)
  * =====================================================================================
  */
     static void
-send_daemon (void)
+send_daemon (void *fd)
 {
+    int new_fd = * (int *) fd;
     char message[MAX_MSG_SIZE];
     while (1) {
         printf("Say something: ");
         scanf("%s", message);
-        if (chat_server_send(message, strlen(message)) < 0) {
+        if (chat_server_send(new_fd, message, strlen(message)) < 0) {
             perror("send");
             exit(1);
         }
     }
+    chat_server_close_client(new_fd);
     return ;
 }		/* -----  end of static function send_daemon  ----- */
 
@@ -81,17 +87,16 @@ main (void)
         exit(1);
     }
     printf("Waiting for client.\n");
-    chat_server_accept_client();
-    if (fork() == 0) {
-        recv_daemon();
-        chat_server_close_client();
-    } else {
+    while (1) {
+        pthread_t tid;
+        int new_fd = chat_server_accept_client();
+        if (new_fd < 0) {
+            perror("accept");
+            exit(1);
+        }
         printf("New client!\n");
-        send_daemon();
-        chat_server_close_client();
-    }
-    while(waitpid(-1,NULL,WNOHANG) > 0) {
-        ;
+        pthread_create(&tid, NULL, (void *) recv_daemon, (void *) &new_fd);
+        pthread_create(&tid, NULL, (void *) send_daemon, (void *) &new_fd);
     }
     if (chat_server_exit()) {
         perror("exit");

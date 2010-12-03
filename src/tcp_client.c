@@ -21,6 +21,7 @@
 #include    <errno.h>
 #include    <string.h>
 #include    <unistd.h>
+#include	<pthread.h> 
 #include	"sock_wrapper.h" 
 
 /* 
@@ -40,6 +41,7 @@ recv_daemon (void)
             perror("recv");
             exit(1);
         }
+        message[numbytes] = '\0';
         printf("\nServer says: %s\n", message);
     }
     return ;
@@ -58,7 +60,7 @@ send_daemon (void)
     while (1) {
         printf("Say something: ");
         scanf("%s", message);
-        if (chat_server_send(message, strlen(message)) < 0) {
+        if (chat_client_send(message, strlen(message)) < 0) {
             perror("send");
             exit(1);
         }
@@ -75,6 +77,7 @@ send_daemon (void)
     int
 main (int argc, char *argv[])
 {
+    pthread_t tid[2];
     if (argc != 2) {
         printf("Usage: ./tcp_client hostname.\n");
         exit(1);
@@ -85,11 +88,11 @@ main (int argc, char *argv[])
         exit(1);
     }
 
-    if (fork() == 0) {
-        recv_daemon();
-    } else {
-        send_daemon();
-    }
+    pthread_create(&tid[0], NULL, (void *) recv_daemon, NULL);
+    pthread_create(&tid[1], NULL, (void *) send_daemon, NULL);
+
+    pthread_join(tid[0], NULL);
+    pthread_join(tid[1], NULL);
 
     if (chat_client_exit()) {
         perror("exit");
