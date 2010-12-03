@@ -1,0 +1,17 @@
+Dependences
+======
+This software depends on libpthread.
+
+Install
+======
+To install, run:
+    $ make
+    $ sudo make install
+
+Uninstall
+======
+To uninstall, run:
+    $ sudo make uninstall
+
+Don't remove the file "installed_files", it's used for uninstallation.
+
