@@ -18,7 +18,7 @@
 CC              = gcc
 CFLAGS          = -c -g -Wall -fPIC
 LFLAGS          = -g -shared
-SYS_LIBS        = 
+SYS_LIBS        = -lpthread
 TARBALL_EXCLUDE = "*.{o,gz,zip}"
 ZIP_EXCLUDE     = *.o *.gz *.zip
 
@@ -31,7 +31,7 @@ all:	$(TARGETS)
 			$(CC) $(CFLAGS) $*.c
 
 #---------- target 1 -------------------------------------
-libchatsys.so.1.0.0 :	parser.o sock_wrapper.o
+libchatsys.so.1.0.0 :	parser.o sock_wrapper.o event.o
 	$(CC) $(LFLAGS) -o $@ $^  $(SYS_LIBS)
 
 #---------- target 2 -------------------------------------
