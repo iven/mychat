@@ -65,8 +65,10 @@ zip:
 #---------- clear up -------------------------------------
 clean:
 			rm  --force  $(TARGETS) $(ZIP_EXCLUDE)
+			$(MAKE) -C $(LIBCHATSYS_DIR) clean
  
 #---------- install -------------------------------------
 install:	all
-			install -m 644 $(LIBCHATSYS_DIR)/libchatsys.so* $(PREFIX)/lib/
 			install -m 755 $(TARGETS) $(PREFIX)/bin/
+			$(MAKE) -C $(LIBCHATSYS_DIR) install
+

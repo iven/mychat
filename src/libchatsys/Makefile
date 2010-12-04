@@ -31,7 +31,7 @@ all:	$(TARGETS)
 			$(CC) $(CFLAGS) $*.c
 
 #---------- target 1 -------------------------------------
-libchatsys.so.1.0.0 :	parser.o sock_wrapper.o event.o
+libchatsys.so.1.0.0 :	parser.o sock_wrapper.o event.o queue.o
 	$(CC) $(LFLAGS) -o $@ $^  $(SYS_LIBS)
 
 #---------- target 2 -------------------------------------
@@ -57,3 +57,6 @@ zip:
 clean:
 			rm  --force  $(TARGETS) $(ZIP_EXCLUDE)
  
+#---------- install -------------------------------------
+install:	all
+			install -m 644 libchatsys.so* $(PREFIX)/lib/
