@@ -28,7 +28,7 @@
     Queue *
 queue_new ( void )
 {
-    return (Queue *) calloc(sizeof(Queue));
+    return (Queue *) calloc(1, sizeof(Queue));
 }		/* -----  end of function queue_new  ----- */
 
 /* 
@@ -40,7 +40,7 @@ queue_new ( void )
     int
 queue_destory ( Queue *queue )
 {
-    while (!queue(empty)) {                     /* Destroy every node in the queue */
+    while (!queue_empty(queue)) {                     /* Destroy every node in the queue */
         queue_node_destroy(queue_pop(queue));
     }
     free(queue);
@@ -107,21 +107,27 @@ queue_pop ( Queue *queue )
  * =====================================================================================
  */
     Queue_node *
-queue_node_new ( void )
+queue_node_new ( void *data )
 {
-    return (Queue_node *) calloc(sizeof(Queue_node));
+    Queue_node *node;
+    node =  (Queue_node *) calloc(1, sizeof(Queue_node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    return node;
 }		/* -----  end of function queue_node_new  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  queue_node_destroy
  *  Description:  Destroy a queue node.
+ *                You _must_ free the data yourself.
  * =====================================================================================
  */
     int
 queue_node_destroy ( Queue_node *node )
 {
-    free(node->data);
     free(node);
     return 0;
 }		/* -----  end of function queue_node_destroy  ----- */

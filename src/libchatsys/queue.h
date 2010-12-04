@@ -19,6 +19,12 @@
 #ifndef  QUEUE_INC
 #define  QUEUE_INC
 
+struct queue_node {
+    struct queue_node *next;
+    void       *data;
+};				/* ----------  end of struct queue_node  ---------- */
+typedef struct queue_node Queue_node;
+
 struct queue {
     Queue_node *head;
     Queue_node *tail;
@@ -26,15 +32,12 @@ struct queue {
 };				/* ----------  end of struct queue  ---------- */
 typedef struct queue Queue;
 
-struct queue_node {
-    Queue_node *next;
-    void       *data;
-};				/* ----------  end of struct queue_node  ---------- */
-typedef struct queue_node Queue_node;
-
 Queue *queue_new(void);
 int queue_destroy(Queue *queue);
+int queue_empty(Queue *queue);
 int queue_push(Queue *queue, Queue_node *node);
 Queue_node *queue_pop(Queue *queue);
+Queue_node *queue_node_new(void *data);
+int queue_node_destroy(Queue_node *node);
 
 #endif   /* ----- #ifndef QUEUE_INC  ----- */
