@@ -20,7 +20,7 @@
 #define  SOCK_WRAPPER_INC
 
 /* #####   HEADER FILE INCLUDES   ################################################### */
-#include	"parser.h" 
+#include	"message.h" 
 
 /* #####   MACROS  -  LOCAL TO THIS SOURCE FILE   ################################### */
 #define QUEUE_SIZE 20                              /*  */

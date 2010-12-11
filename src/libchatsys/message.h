@@ -1,9 +1,9 @@
 /*
  * =====================================================================================
  *
- *       Filename:  parser.h
+ *       Filename:  message.h
  *
- *    Description:  Interface of the ChatSys parser.
+ *    Description:  Interface of the ChatSys message.
  *
  *        Version:  1.0
  *        Created:  2010年12月02日 19时57分22秒
@@ -16,8 +16,8 @@
  * =====================================================================================
  */
 
-#ifndef  PARSER_INC
-#define  PARSER_INC
+#ifndef  MESSAGE_INC
+#define  MESSAGE_INC
 
 #define	MAX_TEXT_LEN 1024			/*  */
 
@@ -42,4 +42,4 @@ typedef struct chat_pdu Chat_pdu;
 int chat_pdu_parse(const Chat_pdu *pdu, Chat_msg *msg);
 int chat_pdu_format(Chat_pdu *pdu, const Chat_msg *msg);
 
-#endif   /* ----- #ifndef PARSER_INC  ----- */
+#endif   /* ----- #ifndef MESSAGE_INC  ----- */
