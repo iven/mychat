@@ -14,7 +14,7 @@
 #
 #===============================================================================
 
-PREFIX			= /usr
+export PREFIX	= /usr
 LIBCHATSYS_DIR  = ./libchatsys
 
 CC              = gcc

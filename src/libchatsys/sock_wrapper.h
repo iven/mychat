@@ -20,10 +20,10 @@
 #define  SOCK_WRAPPER_INC
 
 /* #####   HEADER FILE INCLUDES   ################################################### */
+#include	"parser.h" 
 
 /* #####   MACROS  -  LOCAL TO THIS SOURCE FILE   ################################### */
-#define	SERVER_PORT 6666			/*  */
-#define	MAX_MSG_SIZE 1024			/*  */
+#define QUEUE_SIZE 20                              /*  */
 
 /* #####   TYPE DEFINITIONS  -  LOCAL TO THIS SOURCE FILE   ######################### */
 
@@ -34,17 +34,14 @@
 /* #####   PROTOTYPES  -  LOCAL TO THIS SOURCE FILE   ############################### */
 
 /* #####   FUNCTION DEFINITIONS  -  EXPORTED FUNCTIONS   ############################ */
-int chat_server_init (void);
-int chat_server_exit (void);
-int chat_server_accept_client (void);
-int chat_server_close_client (int fd);
-int chat_server_send (int fd, const char *message, int size);
-int chat_server_recv (int fd, char *buf, int size);
+int chat_server_init (int server_port);
+int chat_client_init (int server_port, const char *server_name);
 
-int chat_client_init (const char *server_name);
-int chat_client_exit (void);
-int chat_client_recv (char *buf, int size);
-int chat_client_send (const char *message, int size);
+int chat_server_accept_client (int server_fd);
+
+int chat_send (int client_fd, const Chat_msg *msg);
+int chat_recv (int client_fd, Chat_msg *buf);
+int chat_exit (int fd);
 
 /* #####   FUNCTION DEFINITIONS  -  LOCAL TO THIS SOURCE FILE   ##################### */
 

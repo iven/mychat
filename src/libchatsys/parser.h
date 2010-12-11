@@ -28,10 +28,18 @@ struct chat_msg {
     int  len;
     char text[MAX_TEXT_LEN];
 };				/* ----------  end of struct chat_msg  ---------- */
-
 typedef struct chat_msg Chat_msg;
 
-int char_pdu_parse(void *pdu, Chat_msg *msg);
-int char_pdu_format(void *pdu, Chat_msg *msg);
+struct chat_pdu {
+    char version:4;
+    char type:4;
+    char sn;
+    short len;
+    char text[MAX_TEXT_LEN];
+};				/* ----------  end of struct chat_pdu  ---------- */
+typedef struct chat_pdu Chat_pdu;
+
+int chat_pdu_parse(const Chat_pdu *pdu, Chat_msg *msg);
+int chat_pdu_format(Chat_pdu *pdu, const Chat_msg *msg);
 
 #endif   /* ----- #ifndef PARSER_INC  ----- */

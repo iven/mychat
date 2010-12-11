@@ -19,16 +19,6 @@
 #include	<string.h> 
 #include	"parser.h" 
 
-struct chat_pdu {
-    char version:4;
-    char type:4;
-    char sn;
-    short len;
-    char text[MAX_TEXT_LEN];
-};				/* ----------  end of struct chat_pdu  ---------- */
-
-typedef struct chat_pdu Chat_pdu;
-
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  chat_pdu_parse
@@ -36,14 +26,13 @@ typedef struct chat_pdu Chat_pdu;
  * =====================================================================================
  */
     int
-chat_pdu_parse (void *pdu, Chat_msg *msg)
+chat_pdu_parse (const Chat_pdu *pdu, Chat_msg *msg)
 {
-    Chat_pdu *p = (Chat_pdu *) pdu;
-    msg->version = p->version;
-    msg->type = p->type;
-    msg->sn = p->sn;
-    msg->len = p->len;
-    memcpy(msg->text, p->text, MAX_TEXT_LEN);
+    msg->version = pdu->version;
+    msg->type = pdu->type;
+    msg->sn = pdu->sn;
+    msg->len = pdu->len;
+    memcpy(msg->text, pdu->text, MAX_TEXT_LEN);
     
     return 0;
 }		/* -----  end of function chat_pdu_parse  ----- */
@@ -55,14 +44,13 @@ chat_pdu_parse (void *pdu, Chat_msg *msg)
  * =====================================================================================
  */
     int
-chat_pdu_format (void *pdu, Chat_msg *msg)
+chat_pdu_format (Chat_pdu *pdu, const Chat_msg *msg)
 {
-    Chat_pdu *p = (Chat_pdu *) pdu;
-    p->version = msg->version;
-    p->type = msg->type;
-    p->sn = msg->sn;
-    p->len = msg->len;
-    memcpy(p->text, msg->text, MAX_TEXT_LEN);
+    pdu->version = msg->version;
+    pdu->type = msg->type;
+    pdu->sn = msg->sn;
+    pdu->len = msg->len;
+    memcpy(pdu->text, msg->text, MAX_TEXT_LEN);
     
     return 0;
 }		/* -----  end of function chat_pdu_format  ----- */

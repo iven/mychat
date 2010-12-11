@@ -34,20 +34,15 @@
     static void
 recv_daemon (void *fd)
 {
-    int new_fd = * (int *) fd;
-    int numbytes;
-    char message[MAX_MSG_SIZE];
+    int client_fd = (int) fd;
+    Chat_msg msg;
     while(1) {
-        numbytes = chat_server_recv(new_fd, message, MAX_MSG_SIZE);
-        if (numbytes < 0) {
-            perror("recv");
+        if (chat_recv(client_fd, &msg) < 0) {
             exit(1);
         }
-        message[numbytes] = '\0';
-        printf("\nClient says: %s\n", message);
+        printf("\nClient says: %s\n", msg.text);
     }
-    chat_server_close_client(new_fd);
-    return ;
+    chat_exit(client_fd);
 }		/* -----  end of static function recv_daemon  ----- */
 
 /* 
@@ -59,18 +54,16 @@ recv_daemon (void *fd)
     static void
 send_daemon (void *fd)
 {
-    int new_fd = * (int *) fd;
-    char message[MAX_MSG_SIZE];
+    int client_fd = (int) fd;
+    Chat_msg msg;
     while (1) {
         printf("Say something: ");
-        scanf("%s", message);
-        if (chat_server_send(new_fd, message, strlen(message)) < 0) {
-            perror("send");
+        scanf("%s", msg.text);
+        if (chat_send(client_fd, &msg) < 0) {
             exit(1);
         }
     }
-    chat_server_close_client(new_fd);
-    return ;
+    chat_exit(client_fd);
 }		/* -----  end of static function send_daemon  ----- */
 
 /* 
@@ -82,24 +75,23 @@ send_daemon (void *fd)
     int
 main (void)
 {
-    if (chat_server_init()) {
-        perror("init");
+    int server_fd, client_fd;
+    pthread_t tid;
+    server_fd = chat_server_init(6666);
+    if (server_fd < 0) {
         exit(1);
     }
     printf("Waiting for client.\n");
     while (1) {
-        pthread_t tid;
-        int new_fd = chat_server_accept_client();
-        if (new_fd < 0) {
-            perror("accept");
+        client_fd = chat_server_accept_client(server_fd);
+        if (client_fd < 0) {
             exit(1);
         }
         printf("New client!\n");
-        pthread_create(&tid, NULL, (void *) recv_daemon, (void *) &new_fd);
-        pthread_create(&tid, NULL, (void *) send_daemon, (void *) &new_fd);
+        pthread_create(&tid, NULL, (void *) recv_daemon, (void *) client_fd);
+        pthread_create(&tid, NULL, (void *) send_daemon, (void *) client_fd);
     }
-    if (chat_server_exit()) {
-        perror("exit");
+    if (chat_exit(server_fd) < 0) {
         exit(1);
     }
     return 0;

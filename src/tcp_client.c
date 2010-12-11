@@ -31,20 +31,16 @@
  * =====================================================================================
  */
     static void
-recv_daemon (void)
+recv_daemon (void *fd)
 {
-    int numbytes;
-    char message[MAX_MSG_SIZE];
+    Chat_msg msg;
+    int client_fd = (int) fd;
     while(1) {
-        numbytes = chat_client_recv(message, MAX_MSG_SIZE);
-        if (numbytes < 0) {
-            perror("recv");
+        if (chat_recv(client_fd, &msg) < 0) {
             exit(1);
         }
-        message[numbytes] = '\0';
-        printf("\nServer says: %s\n", message);
+        printf("\nClient says: %s\n", msg.text);
     }
-    return ;
 }		/* -----  end of static function recv_daemon  ----- */
 
 /* 
@@ -54,14 +50,14 @@ recv_daemon (void)
  * =====================================================================================
  */
     static void
-send_daemon (void)
+send_daemon (void *fd)
 {
-    char message[MAX_MSG_SIZE];
+    Chat_msg msg;
+    int client_fd = (int) fd;
     while (1) {
         printf("Say something: ");
-        scanf("%s", message);
-        if (chat_client_send(message, strlen(message)) < 0) {
-            perror("send");
+        scanf("%s", msg.text);
+        if (chat_send(client_fd, &msg) < 0) {
             exit(1);
         }
     }
@@ -77,25 +73,26 @@ send_daemon (void)
     int
 main (int argc, char *argv[])
 {
+    int client_fd;
     pthread_t tid[2];
+
     if (argc != 2) {
         printf("Usage: ./tcp_client hostname.\n");
         exit(1);
     }
 
-    if (chat_client_init(argv[1])) {
-        perror("init");
+    client_fd = chat_client_init(6666, argv[1]);
+    if (client_fd < 0) {
         exit(1);
     }
 
-    pthread_create(&tid[0], NULL, (void *) recv_daemon, NULL);
-    pthread_create(&tid[1], NULL, (void *) send_daemon, NULL);
+    pthread_create(&tid[0], NULL, (void *) recv_daemon, (void *) client_fd);
+    pthread_create(&tid[1], NULL, (void *) send_daemon, (void *) client_fd);
 
     pthread_join(tid[0], NULL);
     pthread_join(tid[1], NULL);
 
-    if (chat_client_exit()) {
-        perror("exit");
+    if (chat_exit(client_fd) < 0) {
         exit(1);
     }
     return 0;
