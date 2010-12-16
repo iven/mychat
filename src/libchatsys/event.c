@@ -21,31 +21,37 @@
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  event_init
- *  Description:  Initialize a event.
+ *         Name:  event_new
+ *  Description:  Create a new event.
  * =====================================================================================
  */
-    int
-event_init ( Event *event, int value )
+    Event *
+event_new ( int value )
 {
-    if (sem_init(event, 0, value) < 0) {
-        perror("sem_init");
+    Event *event = (Event *) calloc(1, sizeof(Event));
+    if (event == NULL || sem_init(event, 0, value) < 0) {
+        perror("event_init");
+        return NULL;
     }
-    return 0;
-}		/* -----  end of function event_init  ----- */
+    return event;
+}		/* -----  end of function event_new  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  event_exit
- *  Description:  Event exit.
+ *         Name:  event_destroy
+ *  Description:  Destroy an event.
  * =====================================================================================
  */
     int
-event_exit ( Event *event )
+event_destroy ( Event *event )
 {
+    if (event == NULL) {
+        return -1;
+    }
     sem_destroy(event);
+    free(event);
     return 0;
-}		/* -----  end of function event_exit  ----- */
+}		/* -----  end of function event_destroy  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -56,8 +62,10 @@ event_exit ( Event *event )
     int
 event_post ( Event *event )
 {
-    sem_post(event);
-    return 0;
+    if (event == NULL) {
+        return -1;
+    }
+    return sem_post(event);;
 }		/* -----  end of function event_post  ----- */
 
 /* 
@@ -69,6 +77,8 @@ event_post ( Event *event )
     int
 event_wait ( Event *event )
 {
-    sem_wait(event);
-    return 0;
+    if (event == NULL) {
+        return -1;
+    }
+    return sem_wait(event);
 }		/* -----  end of function event_wait  ----- */
