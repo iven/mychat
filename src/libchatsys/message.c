@@ -21,12 +21,12 @@
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  chat_pdu_parse
+ *         Name:  chat_msg_parse
  *  Description:  Parse pdu to msg.
  * =====================================================================================
  */
     int
-chat_pdu_parse (const Chat_pdu *pdu, Chat_msg *msg)
+chat_msg_parse (const Chat_pdu *pdu, Chat_msg *msg)
 {
     msg->version = pdu->version;
     msg->type = pdu->type;
@@ -35,16 +35,16 @@ chat_pdu_parse (const Chat_pdu *pdu, Chat_msg *msg)
     memcpy(msg->text, pdu->text, MAX_TEXT_LEN);
 
     return 0;
-}		/* -----  end of function chat_pdu_parse  ----- */
+}		/* -----  end of function chat_msg_parse  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  chat_pdu_format
+ *         Name:  chat_msg_format
  *  Description:  Format msg to pdu.
  * =====================================================================================
  */
     int
-chat_pdu_format (Chat_pdu *pdu, const Chat_msg *msg)
+chat_msg_format (Chat_pdu *pdu, const Chat_msg *msg)
 {
     pdu->version = msg->version;
     pdu->type = msg->type;
@@ -53,5 +53,5 @@ chat_pdu_format (Chat_pdu *pdu, const Chat_msg *msg)
     memcpy(pdu->text, msg->text, MAX_TEXT_LEN);
 
     return 0;
-}		/* -----  end of function chat_pdu_format  ----- */
+}		/* -----  end of function chat_msg_format  ----- */
 

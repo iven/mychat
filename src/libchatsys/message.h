@@ -39,7 +39,7 @@ struct chat_pdu {
 };				/* ----------  end of struct chat_pdu  ---------- */
 typedef struct chat_pdu Chat_pdu;
 
-int chat_pdu_parse(const Chat_pdu *pdu, Chat_msg *msg);
-int chat_pdu_format(Chat_pdu *pdu, const Chat_msg *msg);
+int chat_msg_parse(const Chat_pdu *pdu, Chat_msg *msg);
+int chat_msg_format(Chat_pdu *pdu, const Chat_msg *msg);
 
 #endif   /* ----- #ifndef MESSAGE_INC  ----- */

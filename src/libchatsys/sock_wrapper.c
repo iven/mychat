@@ -125,7 +125,7 @@ chat_recv (int client_fd, Chat_msg *buf)
         perror("chat_recv, recv");
         return -1;
     }
-    chat_pdu_parse(&pdu, buf);
+    chat_msg_parse(&pdu, buf);
     return 0;
 }		/* -----  end of function chat_recv  ----- */
 
@@ -139,7 +139,7 @@ chat_recv (int client_fd, Chat_msg *buf)
 chat_send (int client_fd, const Chat_msg *msg)
 {
     Chat_pdu pdu;
-    chat_pdu_format(&pdu, msg);
+    chat_msg_format(&pdu, msg);
     if (send(client_fd, &pdu, sizeof(Chat_pdu), 0) < 0) {
         perror("chat_send, send");
         return -1;

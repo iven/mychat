@@ -17,6 +17,7 @@
  */
 
 #include	<stdlib.h> 
+#include	<stdio.h> 
 #include	"queue.h" 
 
 /* 
@@ -38,12 +39,12 @@ queue_new ( void )
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  queue_destory
+ *         Name:  queue_destroy
  *  Description:  Destroy a queue.
  * =====================================================================================
  */
     int
-queue_destory ( Queue *queue )
+queue_destroy ( Queue *queue )
 {
     if (queue == NULL) {
         return -1;
@@ -56,12 +57,12 @@ queue_destory ( Queue *queue )
     event_destroy(queue->lock);
     free(queue);
     return 0;
-}		/* -----  end of function queue_destory  ----- */
+}		/* -----  end of function queue_destroy  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  queue_empty
- *  Description:  
+ *  Description:  Test if a queue is empty.
  * =====================================================================================
  */
     inline int
@@ -143,6 +144,7 @@ queue_unlock ( Queue *queue )
  * ===  FUNCTION  ======================================================================
  *         Name:  queue_node_new
  *  Description:  Create a new queue node.
+ *                @data must be alloced with malloc/calloc.
  * =====================================================================================
  */
     Queue_node *
@@ -161,12 +163,17 @@ queue_node_new ( void *data )
  * ===  FUNCTION  ======================================================================
  *         Name:  queue_node_destroy
  *  Description:  Destroy a queue node.
- *                You _must_ free the data yourself.
  * =====================================================================================
  */
     int
 queue_node_destroy ( Queue_node *node )
 {
+    if (node == NULL) {
+        return -1;
+    }
+    if (node->data != NULL) {
+        free(node->data);
+    }
     free(node);
     return 0;
 }		/* -----  end of function queue_node_destroy  ----- */

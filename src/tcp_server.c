@@ -23,7 +23,7 @@
 #include    <sys/wait.h>
 #include    <unistd.h>
 #include	<pthread.h> 
-#include	"sock_wrapper.h" 
+#include	"protocol.h" 
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -81,6 +81,9 @@ main (void)
     if (server_fd < 0) {
         exit(1);
     }
+    if (chat_protocol_init() < 0) {
+        exit(1);
+    }
     printf("Waiting for client.\n");
     while (1) {
         client_fd = chat_server_accept_client(server_fd);
@@ -90,6 +93,9 @@ main (void)
         printf("New client!\n");
         pthread_create(&tid, NULL, (void *) recv_daemon, (void *) client_fd);
         pthread_create(&tid, NULL, (void *) send_daemon, (void *) client_fd);
+    }
+    if (chat_protocol_exit() < 0) {
+        exit(1);
     }
     if (chat_exit(server_fd) < 0) {
         exit(1);

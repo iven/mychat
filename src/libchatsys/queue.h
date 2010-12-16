@@ -19,6 +19,8 @@
 #ifndef  QUEUE_INC
 #define  QUEUE_INC
 
+#include	"event.h" 
+
 struct queue_node {
     struct queue_node *next;
     void       *data;
