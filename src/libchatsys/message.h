@@ -39,6 +39,9 @@ struct chat_pdu {
 };				/* ----------  end of struct chat_pdu  ---------- */
 typedef struct chat_pdu Chat_pdu;
 
+Chat_msg *chat_msg_new(void);
+int chat_msg_destroy (Chat_msg *msg);
+
 int chat_msg_parse(const Chat_pdu *pdu, Chat_msg *msg);
 int chat_msg_format(Chat_pdu *pdu, const Chat_msg *msg);
 

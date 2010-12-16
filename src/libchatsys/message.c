@@ -17,7 +17,37 @@
  */
 
 #include	<string.h>
+#include	<stdlib.h> 
 #include	"message.h"
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  chat_msg_new
+ *  Description:  
+ * =====================================================================================
+ */
+    Chat_msg *
+chat_msg_new ( void )
+{
+    Chat_msg *msg = (Chat_msg *) calloc(1, sizeof(Chat_msg));
+    return msg;
+}		/* -----  end of function chat_msg_new  ----- */
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  chat_msg_destroy
+ *  Description:  
+ * =====================================================================================
+ */
+    int
+chat_msg_destroy ( Chat_msg *msg )
+{
+    if (msg == NULL) {
+        return -1;
+    }
+    free(msg);
+    return 0;
+}		/* -----  end of function chat_msg_destroy  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
