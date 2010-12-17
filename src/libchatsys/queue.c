@@ -49,11 +49,9 @@ queue_destroy ( Queue *queue )
     if (queue == NULL) {
         return -1;
     }
-    queue_lock(queue);
-    while (!queue_empty(queue)) {                     /* Destroy every node in the queue */
-        queue_node_destroy(queue_pop(queue));
+    if (!queue_empty(queue)) {
+        return -2;
     }
-    queue_unlock(queue);
     event_destroy(queue->lock);
     free(queue);
     return 0;
@@ -118,6 +116,23 @@ queue_pop ( Queue *queue )
 
 /* 
  * ===  FUNCTION  ======================================================================
+ *         Name:  queue_foreach
+ *  Description:  Perform @func to each node on the @queue.
+ * =====================================================================================
+ */
+    void
+queue_foreach ( Queue *queue, Queue_callback cb_func, void *data )
+{
+    Queue_node *node = queue->tail;
+    while (node != NULL) {
+        cb_func(node, data);
+        node = node->next;
+    }
+    return ;
+}		/* -----  end of function queue_foreach  ----- */
+
+/* 
+ * ===  FUNCTION  ======================================================================
  *         Name:  queue_lock
  *  Description:  Lock a queue.
  * =====================================================================================
@@ -144,7 +159,6 @@ queue_unlock ( Queue *queue )
  * ===  FUNCTION  ======================================================================
  *         Name:  queue_node_new
  *  Description:  Create a new queue node.
- *                @data must be alloced with malloc/calloc.
  * =====================================================================================
  */
     Queue_node *
@@ -163,6 +177,7 @@ queue_node_new ( void *data )
  * ===  FUNCTION  ======================================================================
  *         Name:  queue_node_destroy
  *  Description:  Destroy a queue node.
+ *                You _must_ free the data yourself.
  * =====================================================================================
  */
     int
@@ -170,9 +185,6 @@ queue_node_destroy ( Queue_node *node )
 {
     if (node == NULL) {
         return -1;
-    }
-    if (node->data != NULL) {
-        free(node->data);
     }
     free(node);
     return 0;

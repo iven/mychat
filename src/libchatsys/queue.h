@@ -35,10 +35,13 @@ struct queue {
 };				/* ----------  end of struct queue  ---------- */
 typedef struct queue Queue;
 
+typedef void (*Queue_callback)(Queue_node *, void *);
+
 Queue *queue_new(void);
 int queue_destroy(Queue *queue);
 
 int queue_empty(Queue *queue);
+void queue_foreach(Queue *queue, Queue_callback func, void *data);
 
 Queue_node *queue_pop(Queue *queue);
 int queue_push(Queue *queue, Queue_node *node);
