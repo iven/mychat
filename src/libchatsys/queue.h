@@ -19,6 +19,8 @@
 #ifndef  QUEUE_INC
 #define  QUEUE_INC
 
+#include	"event.h" 
+
 struct queue_node {
     struct queue_node *next;
     void       *data;
@@ -28,15 +30,25 @@ typedef struct queue_node Queue_node;
 struct queue {
     Queue_node *head;
     Queue_node *tail;
+    Event      *lock;
     int n_nodes;
 };				/* ----------  end of struct queue  ---------- */
 typedef struct queue Queue;
 
+typedef void (*Queue_callback)(Queue_node *, void *);
+
 Queue *queue_new(void);
 int queue_destroy(Queue *queue);
+
 int queue_empty(Queue *queue);
-int queue_push(Queue *queue, Queue_node *node);
+void queue_foreach(Queue *queue, Queue_callback func, void *data);
+
 Queue_node *queue_pop(Queue *queue);
+int queue_push(Queue *queue, Queue_node *node);
+
+int queue_lock (Queue *queue);
+int queue_unlock (Queue *queue);
+
 Queue_node *queue_node_new(void *data);
 int queue_node_destroy(Queue_node *node);
 

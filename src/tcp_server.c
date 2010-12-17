@@ -23,48 +23,65 @@
 #include    <sys/wait.h>
 #include    <unistd.h>
 #include	<pthread.h> 
-#include	"sock_wrapper.h" 
+#include	"user_info.h" 
+#include	"protocol.h" 
+#include	"queue.h" 
+
+static Queue *user_queue;
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  recv_daemon
- *  Description:  receive messages from client.
+ *         Name:  send_to_user
+ *  Description:  
  * =====================================================================================
  */
     static void
-recv_daemon (void *fd)
+send_to_user ( Queue_node *node, void *msg )
 {
-    int client_fd = (int) fd;
-    Chat_msg msg;
-    while(1) {
-        if (chat_recv(client_fd, &msg) < 0) {
-            exit(1);
-        }
-        printf("\nClient says: %s\n", msg.text);
-    }
-    chat_exit(client_fd);
-}		/* -----  end of static function recv_daemon  ----- */
+    User_info *info = node->data;
+    chat_send(info->fd, msg);
+    return ;
+}		/* -----  end of static function send_to_user  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  send_daemon
- *  Description:  send messages to client.
+ *         Name:  process_thread
+ *  Description:  Process messages.
  * =====================================================================================
  */
-    static void
-send_daemon (void *fd)
+    static int
+process_thread ( void )
 {
-    int client_fd = (int) fd;
-    Chat_msg msg;
+    static int sn = 0;
+    Chat_msg *msg;
+    Queue_node *node;
     while (1) {
-        printf("Say something: ");
-        scanf("%s", msg.text);
-        if (chat_send(client_fd, &msg) < 0) {
-            exit(1);
+        msg = chat_pop_message();
+        if (msg->type != CHAT_MSG_ACK) {
+            sn++;
         }
+        switch ( msg->type ) {
+            case CHAT_MSG_LOGIN:
+                printf("User %s logged in!\n", msg->text);
+                node = queue_node_new(user_info_new(msg->fd, msg->text));
+                queue_push(user_queue, node);
+                break;
+            case CHAT_MSG_LOGOUT:
+                printf("User %s logged out!\n", msg->text);
+                node = queue_pop(user_queue);
+                user_info_destroy(node->data);
+                queue_node_destroy(node);
+                break;
+            case CHAT_MSG_CHAT:
+                queue_foreach(user_queue, send_to_user, (void *)msg);
+                break;
+            default:
+                break;
+        }				/* -----  end switch  ----- */
+        chat_msg_destroy(msg);
     }
-    chat_exit(client_fd);
-}		/* -----  end of static function send_daemon  ----- */
+    return 0;
+}		/* -----  end of static function process_thread  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -77,10 +94,12 @@ main (void)
 {
     int server_fd, client_fd;
     pthread_t tid;
-    server_fd = chat_server_init(6666);
+    user_queue = queue_new();
+    server_fd = chat_protocol_init(CHAT_SERVER, 6666, NULL);
     if (server_fd < 0) {
         exit(1);
     }
+    pthread_create(&tid, NULL, (void *) process_thread, NULL);
     printf("Waiting for client.\n");
     while (1) {
         client_fd = chat_server_accept_client(server_fd);
@@ -88,10 +107,9 @@ main (void)
             exit(1);
         }
         printf("New client!\n");
-        pthread_create(&tid, NULL, (void *) recv_daemon, (void *) client_fd);
-        pthread_create(&tid, NULL, (void *) send_daemon, (void *) client_fd);
+        pthread_create(&tid, NULL, (void *) chat_recv_thread, (void *) client_fd);
     }
-    if (chat_exit(server_fd) < 0) {
+    if (chat_protocol_exit(server_fd) < 0) {
         exit(1);
     }
     return 0;

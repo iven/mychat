@@ -23,8 +23,8 @@
 
 typedef sem_t Event;
 
-int event_init(Event *event, int value);
-int event_exit(Event *event);
+Event *event_new(int value);
+int event_destroy(Event *event);
 int event_post(Event *event);
 int event_wait(Event *event);
 
