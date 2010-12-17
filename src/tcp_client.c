@@ -22,47 +22,35 @@
 #include    <string.h>
 #include    <unistd.h>
 #include	<pthread.h> 
-#include	"sock_wrapper.h" 
+#include	"protocol.h" 
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  recv_daemon
- *  Description:  receive messages from server.
+ *         Name:  process_thread
+ *  Description:  Process messages.
  * =====================================================================================
  */
-    static void
-recv_daemon (void *fd)
+    static int
+process_thread ( void )
 {
-    Chat_msg msg;
-    int client_fd = (int) fd;
-    while(1) {
-        if (chat_recv(client_fd, &msg) < 0) {
-            exit(1);
-        }
-        printf("\nClient says: %s\n", msg.text);
-    }
-}		/* -----  end of static function recv_daemon  ----- */
-
-/* 
- * ===  FUNCTION  ======================================================================
- *         Name:  send_daemon
- *  Description:  send messages to server.
- * =====================================================================================
- */
-    static void
-send_daemon (void *fd)
-{
-    Chat_msg msg;
-    int client_fd = (int) fd;
+    static int sn = 0;
+    Chat_msg *msg;
     while (1) {
-        printf("Say something: ");
-        scanf("%s", msg.text);
-        if (chat_send(client_fd, &msg) < 0) {
-            exit(1);
+        msg = chat_pop_message();
+        if (msg->type != CHAT_MSG_ACK) {
+            sn++;
         }
+        switch ( msg->type ) {
+            case CHAT_MSG_CHAT:
+                printf("%s\n", msg->text);
+                break;
+            default:
+                break;
+        }				/* -----  end switch  ----- */
+        chat_msg_destroy(msg);
     }
-    return ;
-}		/* -----  end of static function send_daemon  ----- */
+    return 0;
+}		/* -----  end of static function process_thread  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -76,23 +64,36 @@ main (int argc, char *argv[])
     int client_fd;
     pthread_t tid[2];
 
-    if (argc != 2) {
-        printf("Usage: ./tcp_client hostname.\n");
+    if (argc != 3) {
+        printf("Usage: ./tcp_client hostname username.\n");
         exit(1);
     }
 
-    client_fd = chat_client_init(6666, argv[1]);
+    client_fd = chat_protocol_init(CHAT_CLIENT, 6666, argv[1]);
     if (client_fd < 0) {
         exit(1);
     }
 
-    pthread_create(&tid[0], NULL, (void *) recv_daemon, (void *) client_fd);
-    pthread_create(&tid[1], NULL, (void *) send_daemon, (void *) client_fd);
+    Chat_msg *msg = chat_msg_new();
+    msg->type = CHAT_MSG_LOGIN;
+    strcpy(msg->text, argv[2]);
+    chat_send(client_fd, msg);
+
+    pthread_create(&tid[0], NULL, (void *) chat_recv_thread, (void *) client_fd);
+    pthread_create(&tid[1], NULL, (void *) process_thread, (void *) client_fd);
+
+    char text[4096];
+    while (scanf("%s", text)) {
+        msg->type = CHAT_MSG_CHAT;
+        strcpy(msg->text, text);
+        chat_send(client_fd, msg);
+    }
+    chat_msg_destroy(msg);
 
     pthread_join(tid[0], NULL);
     pthread_join(tid[1], NULL);
 
-    if (chat_exit(client_fd) < 0) {
+    if (chat_protocol_exit(client_fd) < 0) {
         exit(1);
     }
     return 0;
