@@ -85,7 +85,7 @@ chat_server_accept_client (int server_fd)
 chat_client_init (int server_port, const char *server_name)
 {
     int client_fd;
-    struct sockaddr_in client_addr, server_addr;
+    struct sockaddr_in server_addr;
     struct hostent *server_host;
 
     client_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -93,9 +93,6 @@ chat_client_init (int server_port, const char *server_name)
         perror("chat_client_init, socket");
         return -1;
     }
-    client_addr.sin_family = AF_INET;
-    client_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    client_addr.sin_port = htons(server_port);
     if ((server_host = gethostbyname(server_name)) == NULL) {
         perror("chat_client_init, gethostbyname");
         return -2;
