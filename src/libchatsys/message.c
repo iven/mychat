@@ -61,6 +61,7 @@ chat_msg_parse (const Chat_pdu *pdu, Chat_msg *msg)
     msg->version = pdu->version;
     msg->type = pdu->type;
     msg->sn = pdu->sn;
+    msg->fd = pdu->fd;
     msg->len = pdu->len;
     memcpy(msg->text, pdu->text, MAX_TEXT_LEN);
 
@@ -79,6 +80,7 @@ chat_msg_format (Chat_pdu *pdu, const Chat_msg *msg)
     pdu->version = msg->version;
     pdu->type = msg->type;
     pdu->sn = msg->sn;
+    pdu->fd = msg->fd;
     pdu->len = msg->len;
     memcpy(pdu->text, msg->text, MAX_TEXT_LEN);
 
