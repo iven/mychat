@@ -66,14 +66,9 @@ chat_protocol_init ( Chat_type type, int server_port, const char *server_name )
     int
 chat_protocol_exit ( int my_fd )
 {
-    Queue_node *node;
     event_destroy(msg_event);                   /* destroy new message event */
-    while (!queue_empty(msg_queue)) {
-        node = queue_pop(msg_queue);
-        free(node->data);
-        queue_node_destroy(node);
-    }
-    queue_destroy(msg_queue);                   /* destroy message queue */
+    queue_destroy(msg_queue,                    /* destroy message queue */
+            (QUEUE_DESTROY) chat_msg_destroy);
     chat_exit(my_fd);                           /* exit server or client */
 
     return 0;
@@ -89,18 +84,21 @@ chat_protocol_exit ( int my_fd )
 chat_recv_thread ( int fd )
 {
     Chat_msg *msg;
+    int retval;
     while (1) {
         msg = chat_msg_new();                   /* Create a new message */
         if (msg == NULL) {
             return -1;
         }
-        if (chat_recv(fd, msg) < 0) {           /* Receive message from @fd */
-            return -3;
+        retval = chat_recv(fd, msg);
+        if (retval < 0) {                       /* Receive message from @fd */
+            return -2;
+        } else if (retval == 0) {               /* client quit normally */
+            return 0;
         }
         msg->fd = fd;
         chat_push_message(msg);                 /* Push message to the queue */
     }
-    return 0;
 }		/* -----  end of static function chat_recv_thread  ----- */
 
 /* 
@@ -121,7 +119,7 @@ chat_pop_message ( void )
         return NULL;
     }
     msg = node->data;
-    queue_node_destroy(node);
+    queue_node_destroy(node, NULL);
     return msg;
 }		/* -----  end of function chat_pop_message  ----- */
 

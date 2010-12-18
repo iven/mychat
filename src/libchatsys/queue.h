@@ -35,13 +35,14 @@ struct queue {
 };				/* ----------  end of struct queue  ---------- */
 typedef struct queue Queue;
 
-typedef void (*Queue_callback)(Queue_node *, void *);
+typedef void (*QUEUE_CALLBACK)(Queue_node *, void *);
+typedef void (*QUEUE_DESTROY)(void *);
 
 Queue *queue_new(void);
-int queue_destroy(Queue *queue);
+int queue_destroy(Queue *queue, QUEUE_DESTROY func);
 
 int queue_empty(Queue *queue);
-void queue_foreach(Queue *queue, Queue_callback func, void *data);
+void queue_foreach(Queue *queue, QUEUE_CALLBACK func, void *data);
 
 Queue_node *queue_pop(Queue *queue);
 int queue_push(Queue *queue, Queue_node *node);
@@ -50,6 +51,6 @@ int queue_lock (Queue *queue);
 int queue_unlock (Queue *queue);
 
 Queue_node *queue_node_new(void *data);
-int queue_node_destroy(Queue_node *node);
+int queue_node_destroy(Queue_node *node, QUEUE_DESTROY func);
 
 #endif   /* ----- #ifndef QUEUE_INC  ----- */

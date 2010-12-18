@@ -44,13 +44,13 @@ queue_new ( void )
  * =====================================================================================
  */
     int
-queue_destroy ( Queue *queue )
+queue_destroy ( Queue *queue, QUEUE_DESTROY destroy_func )
 {
     if (queue == NULL) {
         return -1;
     }
-    if (!queue_empty(queue)) {
-        return -2;
+    while (!queue_empty(queue)) {
+        queue_node_destroy(queue_pop(queue), destroy_func);
     }
     event_destroy(queue->lock);
     free(queue);
@@ -121,7 +121,7 @@ queue_pop ( Queue *queue )
  * =====================================================================================
  */
     void
-queue_foreach ( Queue *queue, Queue_callback cb_func, void *data )
+queue_foreach ( Queue *queue, QUEUE_CALLBACK cb_func, void *data )
 {
     Queue_node *node = queue->tail;
     while (node != NULL) {
@@ -181,10 +181,13 @@ queue_node_new ( void *data )
  * =====================================================================================
  */
     int
-queue_node_destroy ( Queue_node *node )
+queue_node_destroy ( Queue_node *node, QUEUE_DESTROY destroy_func )
 {
     if (node == NULL) {
         return -1;
+    }
+    if ((destroy_func != NULL) && (node->data != NULL)) {
+        destroy_func(node->data);
     }
     free(node);
     return 0;

@@ -118,12 +118,14 @@ chat_client_init (int server_port, const char *server_name)
 chat_recv (int client_fd, Chat_msg *buf)
 {
     Chat_pdu pdu;
-    if (recv(client_fd, &pdu, sizeof(Chat_pdu), 0) < 0) {
+    int retval;
+    retval = recv(client_fd, &pdu, sizeof(Chat_pdu), 0);
+    if (retval < 0) {
         perror("chat_recv, recv");
-        return -1;
+        return retval;
     }
     chat_msg_parse(&pdu, buf);
-    return 0;
+    return retval;
 }		/* -----  end of function chat_recv  ----- */
 
 /* 
