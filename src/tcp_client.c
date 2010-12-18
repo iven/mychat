@@ -83,15 +83,14 @@ main (int argc, char *argv[])
     pthread_create(&tid[1], NULL, (void *) process_thread, (void *) client_fd);
 
     char text[4096];
-    while (scanf("%s", text)) {
+    while (scanf("%s", text) != EOF) {
         msg->type = CHAT_MSG_CHAT;
         strcpy(msg->text, text);
         chat_send(client_fd, msg);
     }
+    msg->type = CHAT_MSG_LOGOUT;
+    chat_send(client_fd, msg);
     chat_msg_destroy(msg);
-
-    pthread_join(tid[0], NULL);
-    pthread_join(tid[1], NULL);
 
     if (chat_protocol_exit(client_fd) < 0) {
         exit(1);

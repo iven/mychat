@@ -124,9 +124,11 @@ queue_pop ( Queue *queue )
 queue_foreach ( Queue *queue, QUEUE_CALLBACK cb_func, void *data )
 {
     Queue_node *node = queue->tail;
+    Queue_node *node_next;
     while (node != NULL) {
+        node_next = node->next;
         cb_func(node, data);
-        node = node->next;
+        node = node_next;
     }
     return ;
 }		/* -----  end of function queue_foreach  ----- */
@@ -192,3 +194,4 @@ queue_node_destroy ( Queue_node *node, QUEUE_DESTROY destroy_func )
     free(node);
     return 0;
 }		/* -----  end of function queue_node_destroy  ----- */
+
