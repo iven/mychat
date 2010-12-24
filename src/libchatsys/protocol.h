@@ -19,13 +19,13 @@
 #ifndef  PROTOCOL_INC
 #define  PROTOCOL_INC
 
-#include	"sock_wrapper.h" 
-#include	"message.h" 
+#include    "sock_wrapper.h"
+#include    "message.h"
 
 enum chat_type {
     CHAT_SERVER,
     CHAT_CLIENT,
-};				/* ----------  end of enum chat_type  ---------- */
+};              /* ----------  end of enum chat_type  ---------- */
 typedef enum chat_type Chat_type;
 
 int chat_protocol_init ( Chat_type type, int server_port, const char *server_name );

@@ -16,11 +16,11 @@
  * =====================================================================================
  */
 
-#include	<stdlib.h> 
-#include	<stdio.h> 
-#include	<string.h> 
-#include	"sock_wrapper.h" 
-#include	"user_info.h" 
+#include    <stdlib.h>
+#include    <stdio.h>
+#include    <string.h>
+#include    "sock_wrapper.h"
+#include    "user_info.h"
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -40,7 +40,7 @@ user_info_new ( int fd, const char *name )
     info->fd = fd;
     strncpy(info->name, name, MAX_NAME_LEN);
     return info;
-}		/* -----  end of function user_info_new  ----- */
+}       /* -----  end of function user_info_new  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -56,7 +56,7 @@ user_info_destroy ( User_info *info )
     }
     free(info);
     return 0;
-}		/* -----  end of function user_info_destroy  ----- */
+}       /* -----  end of function user_info_destroy  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -69,7 +69,7 @@ user_queue_new ( void )
 {
     User_queue *queue = queue_new();
     return queue;
-}		/* -----  end of function user_queue_new  ----- */
+}       /* -----  end of function user_queue_new  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -86,7 +86,7 @@ user_queue_destroy ( User_queue *queue )
     }
     retval = queue_destroy(queue, (QUEUE_DESTROY) user_info_destroy);
     return retval;
-}		/* -----  end of function user_queue_destroy  ----- */
+}       /* -----  end of function user_queue_destroy  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -106,7 +106,7 @@ user_queue_add ( User_queue *queue, User_info *user_info )
     }
     queue_push(queue, node);
     return 0;
-}		/* -----  end of static function user_queue_add  ----- */
+}       /* -----  end of static function user_queue_add  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -142,7 +142,7 @@ user_queue_remove ( User_queue *queue, User_info *user_info )
         }
     }
     return -2;
-}		/* -----  end of function user_queue_remove  ----- */
+}       /* -----  end of function user_queue_remove  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -165,7 +165,7 @@ user_queue_get_from_fd ( User_queue *queue, int fd )
         }
     }
     return NULL;
-}		/* -----  end of function user_queue_get_from_fd  ----- */
+}       /* -----  end of function user_queue_get_from_fd  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -183,7 +183,7 @@ user_queue_send_to_all ( User_queue *queue, Chat_msg *msg )
         chat_send(user_info->fd, msg);
     }
     return 0;
-}		/* -----  end of function user_queue_send_to_all  ----- */
+}       /* -----  end of function user_queue_send_to_all  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -212,4 +212,4 @@ user_queue_get_names ( User_queue *queue )
     }
     names[strlen(names) - 1] = 0;
     return names;
-}		/* -----  end of function user_queue_get_names  ----- */
+}       /* -----  end of function user_queue_get_names  ----- */

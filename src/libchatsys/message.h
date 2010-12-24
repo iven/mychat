@@ -19,7 +19,7 @@
 #ifndef  MESSAGE_INC
 #define  MESSAGE_INC
 
-#define	MAX_TEXT_LEN 1024			/*  */
+#define MAX_TEXT_LEN 1024           /*  */
 
 enum {
     CHAT_MSG_ERROR,
@@ -29,7 +29,7 @@ enum {
     CHAT_MSG_LIST,
     CHAT_MSG_LOGOUT,
     CHAT_MSG_HOLD,
-};				/* ----------  end of enum  ---------- */
+};              /* ----------  end of enum  ---------- */
 
 struct chat_msg {
     char version;
@@ -38,7 +38,7 @@ struct chat_msg {
     int  len;
     int  fd;
     char text[MAX_TEXT_LEN];
-};				/* ----------  end of struct chat_msg  ---------- */
+};              /* ----------  end of struct chat_msg  ---------- */
 typedef struct chat_msg Chat_msg;
 
 struct chat_pdu {
@@ -48,7 +48,7 @@ struct chat_pdu {
     int  fd;
     short len;
     char text[MAX_TEXT_LEN];
-};				/* ----------  end of struct chat_pdu  ---------- */
+};              /* ----------  end of struct chat_pdu  ---------- */
 typedef struct chat_pdu Chat_pdu;
 
 Chat_msg *chat_msg_new(void);

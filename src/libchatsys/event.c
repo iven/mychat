@@ -16,9 +16,9 @@
  * =====================================================================================
  */
 
-#include	<stdio.h> 
-#include	<stdlib.h> 
-#include	"event.h" 
+#include    <stdio.h>
+#include    <stdlib.h>
+#include    "event.h"
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -35,7 +35,7 @@ event_new ( int value )
         return NULL;
     }
     return event;
-}		/* -----  end of function event_new  ----- */
+}       /* -----  end of function event_new  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -52,7 +52,7 @@ event_destroy ( Event *event )
     sem_destroy(event);
     free(event);
     return 0;
-}		/* -----  end of function event_destroy  ----- */
+}       /* -----  end of function event_destroy  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -67,7 +67,7 @@ event_post ( Event *event )
         return -1;
     }
     return sem_post(event);;
-}		/* -----  end of function event_post  ----- */
+}       /* -----  end of function event_post  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -82,4 +82,4 @@ event_wait ( Event *event )
         return -1;
     }
     return sem_wait(event);
-}		/* -----  end of function event_wait  ----- */
+}       /* -----  end of function event_wait  ----- */

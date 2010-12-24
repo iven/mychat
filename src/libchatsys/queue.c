@@ -16,9 +16,9 @@
  * =====================================================================================
  */
 
-#include	<stdlib.h> 
-#include	<stdio.h> 
-#include	"queue.h" 
+#include    <stdlib.h>
+#include    <stdio.h>
+#include    "queue.h"
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -35,7 +35,7 @@ queue_new ( void )
         return NULL;
     }
     return queue;
-}		/* -----  end of function queue_new  ----- */
+}       /* -----  end of function queue_new  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -55,7 +55,7 @@ queue_destroy ( Queue *queue, QUEUE_DESTROY destroy_func )
     event_destroy(queue->lock);
     free(queue);
     return 0;
-}		/* -----  end of function queue_destroy  ----- */
+}       /* -----  end of function queue_destroy  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -67,7 +67,7 @@ queue_destroy ( Queue *queue, QUEUE_DESTROY destroy_func )
 queue_empty ( Queue *queue )
 {
     return (queue->tail == NULL);
-}		/* -----  end of function queue_empty  ----- */
+}       /* -----  end of function queue_empty  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -92,7 +92,7 @@ queue_push ( Queue *queue, Queue_node *node )
     node->next = NULL;                          /* Next node must be NULL */
     queue_unlock(queue);
     return 0;
-}		/* -----  end of function queue_push  ----- */
+}       /* -----  end of function queue_push  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -112,7 +112,7 @@ queue_pop ( Queue *queue )
     queue->n_nodes--;
     queue_unlock(queue);
     return node;
-}		/* -----  end of function queue_pop  ----- */
+}       /* -----  end of function queue_pop  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -124,7 +124,7 @@ queue_pop ( Queue *queue )
 queue_lock ( Queue *queue )
 {
     return event_wait(queue->lock);
-}		/* -----  end of function queue_lock  ----- */
+}       /* -----  end of function queue_lock  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -136,7 +136,7 @@ queue_lock ( Queue *queue )
 queue_unlock ( Queue *queue )
 {
     return event_post(queue->lock);
-}		/* -----  end of function queue_unlock  ----- */
+}       /* -----  end of function queue_unlock  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -154,7 +154,7 @@ queue_node_new ( void *data )
     }
     node->data = data;
     return node;
-}		/* -----  end of function queue_node_new  ----- */
+}       /* -----  end of function queue_node_new  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -174,5 +174,5 @@ queue_node_destroy ( Queue_node *node, QUEUE_DESTROY destroy_func )
     }
     free(node);
     return 0;
-}		/* -----  end of function queue_node_destroy  ----- */
+}       /* -----  end of function queue_node_destroy  ----- */
 

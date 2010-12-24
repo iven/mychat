@@ -24,8 +24,8 @@
 #include    <stdio.h>
 #include    <unistd.h>
 #include    <arpa/inet.h>
-#include	<netdb.h> 
-#include	"sock_wrapper.h" 
+#include    <netdb.h>
+#include    "sock_wrapper.h"
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -55,7 +55,7 @@ chat_server_init (int server_port)
         return -3;
     }
     return server_fd;
-}		/* -----  end of function chat_server_init  ----- */
+}       /* -----  end of function chat_server_init  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -73,7 +73,7 @@ chat_server_accept_client (int server_fd)
         return -1;
     }
     return client_fd;
-}		/* -----  end of function chat_server_accept_client  ----- */
+}       /* -----  end of function chat_server_accept_client  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -106,7 +106,7 @@ chat_client_init (int server_port, const char *server_name)
         return -3;
     }
     return client_fd;
-}		/* -----  end of function chat_client_init  ----- */
+}       /* -----  end of function chat_client_init  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -126,7 +126,7 @@ chat_recv (int client_fd, Chat_msg *buf)
     }
     chat_msg_parse(&pdu, buf);
     return retval;
-}		/* -----  end of function chat_recv  ----- */
+}       /* -----  end of function chat_recv  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -144,7 +144,7 @@ chat_send (int client_fd, const Chat_msg *msg)
         return -1;
     }
     return 0;
-}		/* -----  end of function chat_send  ----- */
+}       /* -----  end of function chat_send  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -160,5 +160,5 @@ chat_exit (int fd)
         return -1;
     }
     return 0;
-}		/* -----  end of function chat_exit  ----- */
+}       /* -----  end of function chat_exit  ----- */
 

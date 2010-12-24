@@ -1,9 +1,9 @@
 /*
  * =====================================================================================
  *
- *       Filename:  tcp_client.c
+ *       Filename:  client_cli.c
  *
- *    Description:  
+ *    Description:  Implemention of chat client.
  *
  *        Version:  1.0
  *        Created:  2010年11月19日 18时41分32秒
@@ -21,8 +21,8 @@
 #include    <errno.h>
 #include    <string.h>
 #include    <unistd.h>
-#include	<pthread.h> 
-#include	"protocol.h" 
+#include    <pthread.h>
+#include    "protocol.h"
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -36,7 +36,7 @@ display_prompt ( void )
     printf(">> ");
     fflush(stdout);
     return ;
-}		/* -----  end of static function display_prompt  ----- */
+}       /* -----  end of static function display_prompt  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -58,12 +58,12 @@ process_thread ( void )
             case CHAT_MSG_LIST:                 /* List users */
                 printf("\033[0;32;40m[Online users: %s]\033[0m\n", msg->text);
                 break;
-        }				/* -----  end switch  ----- */
+        }               /* -----  end switch  ----- */
         chat_msg_destroy(msg);
         display_prompt();
     }
     return 0;
-}		/* -----  end of static function process_thread  ----- */
+}       /* -----  end of static function process_thread  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -101,7 +101,7 @@ send_daemon ( int client_fd )
     chat_send(client_fd, msg);
     chat_msg_destroy(msg);
     return ;
-}		/* -----  end of static function send_daemon  ----- */
+}       /* -----  end of static function send_daemon  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -154,5 +154,5 @@ main (int argc, char *argv[])
     printf("Bye!\n");
 
     return 0;
-}		/* -----  end of function main  ----- */
+}       /* -----  end of function main  ----- */
 

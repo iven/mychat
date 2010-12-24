@@ -19,7 +19,7 @@
 #ifndef  EVENT_INC
 #define  EVENT_INC
 
-#include	<semaphore.h> 
+#include    <semaphore.h> 
 
 typedef sem_t Event;
 

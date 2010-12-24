@@ -16,10 +16,10 @@
  * =====================================================================================
  */
 
-#include	<stdio.h> 
-#include	<stdlib.h> 
-#include	"protocol.h"
-#include	"queue.h"
+#include    <stdio.h>
+#include    <stdlib.h>
+#include    "protocol.h"
+#include    "queue.h"
 
 static Queue *msg_queue;
 static Event *msg_event;
@@ -55,7 +55,7 @@ chat_protocol_init ( Chat_type type, int server_port, const char *server_name )
         return -5;
     }
     return my_fd;
-}		/* -----  end of function chat_protocol_init  ----- */
+}       /* -----  end of function chat_protocol_init  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -72,7 +72,7 @@ chat_protocol_exit ( int my_fd )
     chat_exit(my_fd);                           /* exit server or client */
 
     return 0;
-}		/* -----  end of function chat_protocol_exit  ----- */
+}       /* -----  end of function chat_protocol_exit  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -99,7 +99,7 @@ chat_recv_thread ( int fd )
         msg->fd = fd;
         chat_push_message(msg);                 /* Push message to the queue */
     }
-}		/* -----  end of static function chat_recv_thread  ----- */
+}       /* -----  end of static function chat_recv_thread  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -121,7 +121,7 @@ chat_pop_message ( void )
     msg = node->data;
     queue_node_destroy(node, NULL);
     return msg;
-}		/* -----  end of function chat_pop_message  ----- */
+}       /* -----  end of function chat_pop_message  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -142,5 +142,5 @@ chat_push_message ( Chat_msg *msg )
     queue_push(msg_queue, node);                /* Push the node */
     event_post(msg_event);                      /* Post a new message event */
     return 0;
-}		/* -----  end of function chat_push_message  ----- */
+}       /* -----  end of function chat_push_message  ----- */
 

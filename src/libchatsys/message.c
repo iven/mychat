@@ -16,9 +16,9 @@
  * =====================================================================================
  */
 
-#include	<string.h>
-#include	<stdlib.h> 
-#include	"message.h"
+#include    <string.h>
+#include    <stdlib.h>
+#include    "message.h"
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -31,7 +31,7 @@ chat_msg_new ( void )
 {
     Chat_msg *msg = (Chat_msg *) calloc(1, sizeof(Chat_msg));
     return msg;
-}		/* -----  end of function chat_msg_new  ----- */
+}       /* -----  end of function chat_msg_new  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -47,7 +47,7 @@ chat_msg_destroy ( Chat_msg *msg )
     }
     free(msg);
     return 0;
-}		/* -----  end of function chat_msg_destroy  ----- */
+}       /* -----  end of function chat_msg_destroy  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -66,7 +66,7 @@ chat_msg_parse (const Chat_pdu *pdu, Chat_msg *msg)
     memcpy(msg->text, pdu->text, MAX_TEXT_LEN);
 
     return 0;
-}		/* -----  end of function chat_msg_parse  ----- */
+}       /* -----  end of function chat_msg_parse  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -85,5 +85,5 @@ chat_msg_format (Chat_pdu *pdu, const Chat_msg *msg)
     memcpy(pdu->text, msg->text, MAX_TEXT_LEN);
 
     return 0;
-}		/* -----  end of function chat_msg_format  ----- */
+}       /* -----  end of function chat_msg_format  ----- */
 

@@ -1,9 +1,9 @@
 /*
  * =====================================================================================
  *
- *       Filename:  tcp_server.c
+ *       Filename:  server_cli.c
  *
- *    Description:  
+ *    Description:  Implemention of chat server.
  *
  *        Version:  1.0
  *        Created:  2010年11月19日 18时37分05秒
@@ -22,10 +22,10 @@
 #include    <string.h>
 #include    <sys/wait.h>
 #include    <unistd.h>
-#include	<pthread.h> 
-#include	"user_info.h" 
-#include	"protocol.h" 
-#include	"queue.h" 
+#include    <pthread.h> 
+#include    "user_info.h"
+#include    "protocol.h"
+#include    "queue.h"
 
 static User_queue *user_queue;
 
@@ -75,11 +75,11 @@ process_thread ( void )
                 break;
             default:
                 break;
-        }				/* -----  end switch  ----- */
+        }               /* -----  end switch  ----- */
         chat_msg_destroy(msg);
     }
     return 0;
-}		/* -----  end of static function process_thread  ----- */
+}       /* -----  end of static function process_thread  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -123,4 +123,4 @@ main (void)
         exit(1);
     }
     return 0;
-}		/* -----  end of function main  ----- */
+}       /* -----  end of function main  ----- */
