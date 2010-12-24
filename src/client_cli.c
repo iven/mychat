@@ -116,7 +116,7 @@ main (int argc, char *argv[])
     pthread_t tid[2];
 
     if (argc != 3) {
-        printf("Usage: ./tcp_client hostname username.\n");
+        printf("Usage: chat_client_cli hostname username.\n");
         exit(1);
     }
     /*-----------------------------------------------------------------------------

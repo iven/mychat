@@ -1,2 +1,2 @@
-src/tcp_client
-src/tcp_server
+src/chat_client_cli
+src/chat_server_cli
