@@ -25,7 +25,7 @@ LIBS        	= -L$(LIBCHATSYS_DIR) -lm -lpthread -lchatsys
 TARBALL_EXCLUDE = "*.{o,gz,zip}"
 ZIP_EXCLUDE     = *.o *.gz *.zip
 
-TARGETS	= chat_server_cli chat_client_cli
+TARGETS	= chat_server chat_client_cli
 
 #---------- targets --------------------------------------
 all:	$(TARGETS)
@@ -38,7 +38,7 @@ chat_client_cli:	client_cli.o libchatsys.so
 			$(CC) $(LFLAGS) -o $@ $<  $(LIBS)
 
 #---------- target 2 -------------------------------------
-chat_server_cli:	server_cli.o libchatsys.so
+chat_server:		server.o libchatsys.so
 			$(CC) $(LFLAGS) -o $@ $<  $(LIBS)
 
 #---------- target 3 -------------------------------------

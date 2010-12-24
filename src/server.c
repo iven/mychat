@@ -1,7 +1,7 @@
 /*
  * =====================================================================================
  *
- *       Filename:  server_cli.c
+ *       Filename:  server.c
  *
  *    Description:  Implemention of chat server.
  *
