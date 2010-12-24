@@ -19,29 +19,35 @@ LIBCHATSYS_DIR  = ./libchatsys
 
 CC              = gcc
 CFLAGS          = -c -g -Wall
-INCLUDES		= -I$(LIBCHATSYS_DIR)
+GTKCFLAGS       = `pkg-config gtk+-2.0 --cflags`
+INCLUDES        = -I$(LIBCHATSYS_DIR)
 LFLAGS          = -g
-LIBS        	= -L$(LIBCHATSYS_DIR) -lm -lpthread -lchatsys
+LIBS            = -L$(LIBCHATSYS_DIR) -lm -lpthread -lchatsys
+GTKLIBS         = `pkg-config gtk+-2.0 --libs`
 TARBALL_EXCLUDE = "*.{o,gz,zip}"
 ZIP_EXCLUDE     = *.o *.gz *.zip
 
-TARGETS	= chat_server chat_client_cli
+TARGETS	= chat_server chat_client_cli chat_client_gui
 
 #---------- targets --------------------------------------
 all:	$(TARGETS)
 
 %.o:	%.c
-			$(CC) $(CFLAGS) $(INCLUDES) $*.c
+			$(CC) $(CFLAGS) $(GTKCFLAGS) $(INCLUDES) $*.c
 
 #---------- target 1 -------------------------------------
 chat_client_cli:	client_cli.o libchatsys.so
 			$(CC) $(LFLAGS) -o $@ $<  $(LIBS)
 
 #---------- target 2 -------------------------------------
+chat_client_gui:	client_gui.o libchatsys.so
+			$(CC) $(LFLAGS) -o $@ $<  $(LIBS) $(GTKLIBS)
+
+#---------- target 3 -------------------------------------
 chat_server:		server.o libchatsys.so
 			$(CC) $(LFLAGS) -o $@ $<  $(LIBS)
 
-#---------- target 3 -------------------------------------
+#---------- target 4 -------------------------------------
 libchatsys.so:
 			$(MAKE) -C $(LIBCHATSYS_DIR)
 

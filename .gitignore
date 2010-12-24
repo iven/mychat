@@ -1,2 +1,3 @@
 src/chat_client_cli
+src/chat_client_gui
 src/chat_server
