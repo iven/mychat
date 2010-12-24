@@ -44,28 +44,29 @@ process_thread ( void )
     char buf[MAX_TEXT_LEN + MAX_NAME_LEN + 2];
     char *names;
     while (1) {
-        msg = chat_pop_message();
+        msg = chat_pop_message();               /* Wait for messages */
         if (msg->type != CHAT_MSG_ACK) {
-            sn++;
+            msg->sn = ++sn;
         }
         switch ( msg->type ) {
-            case CHAT_MSG_LOGIN:
+            case CHAT_MSG_LOGIN:                /* Add user to queue */
                 printf("User %s logged in!\n", msg->text);
                 user_info = user_info_new(msg->fd, msg->text);
                 user_queue_add(user_queue, user_info);
                 break;
-            case CHAT_MSG_LOGOUT:
+            case CHAT_MSG_LOGOUT:               /* Remove user from queue */
                 user_info = user_queue_get_from_fd(user_queue, msg->fd);
                 printf("User %s logged out!\n", user_info->name);
                 user_queue_remove(user_queue, user_info);
                 break;
-            case CHAT_MSG_CHAT:
+            case CHAT_MSG_CHAT:                 /* Prefix username and send to all */
+                user_info = user_queue_get_from_fd(user_queue, msg->fd);
                 sprintf(buf, "%s: %s", user_info->name, msg->text);
                 buf[MAX_TEXT_LEN - 1] = '\0';
                 strcpy(msg->text, buf);
                 user_queue_send_to_all(user_queue, msg);
                 break;
-            case CHAT_MSG_LIST:
+            case CHAT_MSG_LIST:                 /* Get usernames and send back */
                 names = user_queue_get_names(user_queue);
                 printf("User %s requested user list.\n", user_info->name);
                 strcpy(msg->text, names);
@@ -91,13 +92,23 @@ main (void)
 {
     int server_fd, client_fd;
     pthread_t tid;
-    user_queue = user_queue_new();
+
+    user_queue = user_queue_new();              /* User information queue */
+    /*-----------------------------------------------------------------------------
+     *  ChatSys initialization.
+     *-----------------------------------------------------------------------------*/
     server_fd = chat_protocol_init(CHAT_SERVER, 6666, NULL);
     if (server_fd < 0) {
         exit(1);
     }
+    printf("Chat server started, waiting for client...\n");
+    /*-----------------------------------------------------------------------------
+     *  Create a thread for managing messages.
+     *-----------------------------------------------------------------------------*/
     pthread_create(&tid, NULL, (void *) process_thread, NULL);
-    printf("Waiting for client.\n");
+    /*-----------------------------------------------------------------------------
+     *  Wait for clients and create receiving threads for them.
+     *-----------------------------------------------------------------------------*/
     while (1) {
         client_fd = chat_server_accept_client(server_fd);
         if (client_fd < 0) {
@@ -105,6 +116,9 @@ main (void)
         }
         pthread_create(&tid, NULL, (void *) chat_recv_thread, (void *) client_fd);
     }
+    /*-----------------------------------------------------------------------------
+     *  ChatSys finalization.
+     *-----------------------------------------------------------------------------*/
     if (chat_protocol_exit(server_fd) < 0) {
         exit(1);
     }

@@ -122,6 +122,18 @@ user_queue_remove ( User_queue *queue, User_info *user_info )
         return -1;
     }
     queue_foreach(queue, node) {
+        /*-----------------------------------------------------------------------------
+         *  When it's the first node
+         *-----------------------------------------------------------------------------*/
+        if ((queue->tail == node) && (node->data == user_info)) {
+            node_next = node->next;
+            queue_node_destroy(node, (QUEUE_DESTROY) user_info_destroy);
+            queue->tail = node_next;
+            return 0;
+        }
+        /*-----------------------------------------------------------------------------
+         *  OtherWise
+         *-----------------------------------------------------------------------------*/
         if ((node->next != NULL) && (node->next->data == user_info)) {
             node_next = node->next->next;
             queue_node_destroy(node->next, (QUEUE_DESTROY) user_info_destroy);
