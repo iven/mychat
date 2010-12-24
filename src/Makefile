@@ -38,8 +38,8 @@ tcp_client:	tcp_client.o libchatsys.so
 			$(CC) $(LFLAGS) -o $@ $<  $(LIBS)
 
 #---------- target 2 -------------------------------------
-tcp_server:	tcp_server.o user_info.o libchatsys.so
-			$(CC) $(LFLAGS) -o $@ tcp_server.o user_info.o  $(LIBS)
+tcp_server:	tcp_server.o libchatsys.so
+			$(CC) $(LFLAGS) -o $@ $<  $(LIBS)
 
 #---------- target 3 -------------------------------------
 libchatsys.so:

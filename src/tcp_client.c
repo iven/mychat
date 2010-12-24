@@ -44,6 +44,9 @@ process_thread ( void )
             case CHAT_MSG_CHAT:
                 printf("%s\n", msg->text);
                 break;
+            case CHAT_MSG_LIST:
+                printf("\033[0;32;40m[Online users: %s]\033[0m\n", msg->text);
+                break;
             default:
                 break;
         }				/* -----  end switch  ----- */
@@ -51,6 +54,42 @@ process_thread ( void )
     }
     return 0;
 }		/* -----  end of static function process_thread  ----- */
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  send_daemon
+ *  Description:  Send user input messages to server.
+ * =====================================================================================
+ */
+    static void
+send_daemon ( int client_fd )
+{
+    Chat_msg *msg = chat_msg_new();
+    char text[4096];
+    int i;
+    while (1) {
+        i = -1;
+        do {
+            text[++i] = getchar();
+        } while (text[i] != '\n' && text[i] != EOF);
+        if (text[i] == '\n') {
+            text[i] = '\0';
+            if (strcmp(text, "/list") == 0) {
+                msg->type = CHAT_MSG_LIST;
+            } else {
+                msg->type = CHAT_MSG_CHAT;
+                strcpy(msg->text, text);
+            }
+            chat_send(client_fd, msg);
+        } else if (text[i] == EOF) {
+            break;
+        }
+    }
+    msg->type = CHAT_MSG_LOGOUT;
+    chat_send(client_fd, msg);
+    chat_msg_destroy(msg);
+    return ;
+}		/* -----  end of static function send_daemon  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -74,23 +113,19 @@ main (int argc, char *argv[])
         exit(1);
     }
 
+    /*-----------------------------------------------------------------------------
+     *  Send login message to server.
+     *-----------------------------------------------------------------------------*/
     Chat_msg *msg = chat_msg_new();
     msg->type = CHAT_MSG_LOGIN;
     strcpy(msg->text, argv[2]);
     chat_send(client_fd, msg);
+    chat_msg_destroy(msg);
 
     pthread_create(&tid[0], NULL, (void *) chat_recv_thread, (void *) client_fd);
     pthread_create(&tid[1], NULL, (void *) process_thread, (void *) client_fd);
 
-    char text[4096];
-    while (scanf("%s", text) != EOF) {
-        msg->type = CHAT_MSG_CHAT;
-        strcpy(msg->text, text);
-        chat_send(client_fd, msg);
-    }
-    msg->type = CHAT_MSG_LOGOUT;
-    chat_send(client_fd, msg);
-    chat_msg_destroy(msg);
+    send_daemon(client_fd);                              /* Loop here */
 
     if (chat_protocol_exit(client_fd) < 0) {
         exit(1);

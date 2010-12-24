@@ -116,25 +116,6 @@ queue_pop ( Queue *queue )
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  queue_foreach
- *  Description:  Perform @func to each node on the @queue.
- * =====================================================================================
- */
-    void
-queue_foreach ( Queue *queue, QUEUE_CALLBACK cb_func, void *data )
-{
-    Queue_node *node = queue->tail;
-    Queue_node *node_next;
-    while (node != NULL) {
-        node_next = node->next;
-        cb_func(node, data);
-        node = node_next;
-    }
-    return ;
-}		/* -----  end of function queue_foreach  ----- */
-
-/* 
- * ===  FUNCTION  ======================================================================
  *         Name:  queue_lock
  *  Description:  Lock a queue.
  * =====================================================================================

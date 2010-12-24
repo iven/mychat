@@ -26,6 +26,7 @@ enum {
     CHAT_MSG_ACK,
     CHAT_MSG_LOGIN,
     CHAT_MSG_CHAT,
+    CHAT_MSG_LIST,
     CHAT_MSG_LOGOUT,
     CHAT_MSG_HOLD,
 };				/* ----------  end of enum  ---------- */

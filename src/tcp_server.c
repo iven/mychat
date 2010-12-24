@@ -27,40 +27,7 @@
 #include	"protocol.h" 
 #include	"queue.h" 
 
-static Queue *user_queue;
-
-/* 
- * ===  FUNCTION  ======================================================================
- *         Name:  send_to_user
- *  Description:  Send message to all users on the user queue.
- * =====================================================================================
- */
-    static void
-send_to_user ( Queue_node *node, void *msg )
-{
-    User_info *info = node->data;
-    chat_send(info->fd, msg);
-    return ;
-}		/* -----  end of static function send_to_user  ----- */
-
-/* 
- * ===  FUNCTION  ======================================================================
- *         Name:  remove_user
- *  Description:  Remove user information from the user queue.
- * =====================================================================================
- */
-    static void
-remove_user ( Queue_node *node, void *fd )
-{
-    int client_fd = (int) fd;
-    User_info *user_info = (User_info *) node->data;
-    if (user_info->fd == client_fd) {
-        printf("User %s logged out!\n", user_info->name);
-        queue_node_destroy(node, (QUEUE_DESTROY) user_info_destroy);
-        chat_exit(client_fd);
-    }
-    return ;
-}		/* -----  end of static function remove_user  ----- */
+static User_queue *user_queue;
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -73,7 +40,9 @@ process_thread ( void )
 {
     static int sn = 0;
     Chat_msg *msg;
-    Queue_node *node;
+    User_info *user_info;
+    char buf[MAX_TEXT_LEN + MAX_NAME_LEN + 2];
+    char *names;
     while (1) {
         msg = chat_pop_message();
         if (msg->type != CHAT_MSG_ACK) {
@@ -82,14 +51,26 @@ process_thread ( void )
         switch ( msg->type ) {
             case CHAT_MSG_LOGIN:
                 printf("User %s logged in!\n", msg->text);
-                node = queue_node_new(user_info_new(msg->fd, msg->text));
-                queue_push(user_queue, node);
+                user_info = user_info_new(msg->fd, msg->text);
+                user_queue_add(user_queue, user_info);
                 break;
             case CHAT_MSG_LOGOUT:
-                queue_foreach(user_queue, (QUEUE_CALLBACK) remove_user, (void *) msg->fd);
+                user_info = user_queue_get_from_fd(user_queue, msg->fd);
+                printf("User %s logged out!\n", user_info->name);
+                user_queue_remove(user_queue, user_info);
                 break;
             case CHAT_MSG_CHAT:
-                queue_foreach(user_queue, (QUEUE_CALLBACK) send_to_user, (void *) msg);
+                sprintf(buf, "%s: %s", user_info->name, msg->text);
+                buf[MAX_TEXT_LEN - 1] = '\0';
+                strcpy(msg->text, buf);
+                user_queue_send_to_all(user_queue, msg);
+                break;
+            case CHAT_MSG_LIST:
+                names = user_queue_get_names(user_queue);
+                printf("User %s requested user list.\n", user_info->name);
+                strcpy(msg->text, names);
+                free(names);
+                chat_send(msg->fd, msg);
                 break;
             default:
                 break;
@@ -102,7 +83,7 @@ process_thread ( void )
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  main
- *  Description:  
+ *  Description:  Main function.
  * =====================================================================================
  */
     int
@@ -110,7 +91,7 @@ main (void)
 {
     int server_fd, client_fd;
     pthread_t tid;
-    user_queue = queue_new();
+    user_queue = user_queue_new();
     server_fd = chat_protocol_init(CHAT_SERVER, 6666, NULL);
     if (server_fd < 0) {
         exit(1);

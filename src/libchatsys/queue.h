@@ -35,14 +35,14 @@ struct queue {
 };				/* ----------  end of struct queue  ---------- */
 typedef struct queue Queue;
 
-typedef void (*QUEUE_CALLBACK)(Queue_node *, void *);
 typedef void (*QUEUE_DESTROY)(void *);
 
 Queue *queue_new(void);
 int queue_destroy(Queue *queue, QUEUE_DESTROY func);
 
 int queue_empty(Queue *queue);
-void queue_foreach(Queue *queue, QUEUE_CALLBACK func, void *data);
+#define	queue_foreach(queue, node) \
+    for (node = queue->tail; node != NULL; node = node->next)
 
 Queue_node *queue_pop(Queue *queue);
 int queue_push(Queue *queue, Queue_node *node);
