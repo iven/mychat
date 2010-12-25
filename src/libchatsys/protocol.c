@@ -18,6 +18,7 @@
 
 #include    <stdio.h>
 #include    <stdlib.h>
+#include    <string.h>
 #include    "protocol.h"
 #include    "queue.h"
 
@@ -144,3 +145,35 @@ chat_push_message ( Chat_msg *msg )
     return 0;
 }       /* -----  end of function chat_push_message  ----- */
 
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  chat_client_login
+ *  Description:  Send login message to server.
+ * =====================================================================================
+ */
+    int
+chat_client_login ( int fd, const char *username )
+{
+    Chat_msg *msg = chat_msg_new();
+    msg->type = CHAT_MSG_LOGIN;
+    strcpy(msg->text, username);
+    chat_send(fd, msg);
+    chat_msg_destroy(msg);
+    return 0;
+}       /* -----  end of function chat_client_login  ----- */
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  chat_client_logout
+ *  Description:  Send logout message to server.
+ * =====================================================================================
+ */
+    int
+chat_client_logout ( int fd )
+{
+    Chat_msg *msg = chat_msg_new();
+    msg->type = CHAT_MSG_LOGOUT;
+    chat_send(fd, msg);
+    chat_msg_destroy(msg);
+    return 0;
+}       /* -----  end of function chat_client_logout  ----- */

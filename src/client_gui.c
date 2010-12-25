@@ -54,7 +54,7 @@ process_thread ( void *data )
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  on_entry_activate
- *  Description:  
+ *  Description:  Being called when enter in pressed in the entry.
  * =====================================================================================
  */
     static gboolean
@@ -63,8 +63,8 @@ on_entry_activate ( GtkWidget *entry, gpointer data )
     int client_fd = GPOINTER_TO_INT(data);
     static int sn = 0;
     const gchar *text;
-    Chat_msg *msg = chat_msg_new();
 
+    Chat_msg *msg = chat_msg_new();
     text = gtk_entry_get_text(GTK_ENTRY(entry));
     if (strcmp(text, "/list") == 0) {   /* List users */
         msg->type = CHAT_MSG_LIST;
@@ -76,7 +76,7 @@ on_entry_activate ( GtkWidget *entry, gpointer data )
     chat_send(client_fd, msg);
     chat_msg_destroy(msg);
 
-    gtk_entry_set_text(GTK_ENTRY(entry), "");
+    gtk_entry_set_text(GTK_ENTRY(entry), "");   /* Clear the entry */
     return FALSE;
 }       /* -----  end of static function on_entry_activate  ----- */
 
@@ -93,10 +93,7 @@ on_delete_event ( GtkWidget *widget, GdkEvent *event, gpointer data )
     /*-----------------------------------------------------------------------------
      *  Send logout message
      *-----------------------------------------------------------------------------*/
-    Chat_msg *msg = chat_msg_new();
-    msg->type = CHAT_MSG_LOGOUT;
-    chat_send(client_fd, msg);
-    chat_msg_destroy(msg);
+    chat_client_logout(client_fd);
     /*-----------------------------------------------------------------------------
      *  ChatSys finalization.
      *-----------------------------------------------------------------------------*/
@@ -165,11 +162,7 @@ main ( int argc, char *argv[] )
     /*-----------------------------------------------------------------------------
      *  Send login message to server.
      *-----------------------------------------------------------------------------*/
-    Chat_msg *msg = chat_msg_new();
-    msg->type = CHAT_MSG_LOGIN;
-    strcpy(msg->text, argv[2]);
-    chat_send(client_fd, msg);
-    chat_msg_destroy(msg);
+    chat_client_login(client_fd, argv[2]);
     /*-----------------------------------------------------------------------------
      *  Start threads.
      *-----------------------------------------------------------------------------*/

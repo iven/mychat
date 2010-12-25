@@ -97,8 +97,6 @@ send_daemon ( int client_fd )
             break;
         }
     }
-    msg->type = CHAT_MSG_LOGOUT;
-    chat_send(client_fd, msg);
     chat_msg_destroy(msg);
     return ;
 }       /* -----  end of static function send_daemon  ----- */
@@ -134,17 +132,17 @@ main (int argc, char *argv[])
     /*-----------------------------------------------------------------------------
      *  Send login message to server.
      *-----------------------------------------------------------------------------*/
-    Chat_msg *msg = chat_msg_new();
-    msg->type = CHAT_MSG_LOGIN;
-    strcpy(msg->text, argv[2]);
-    chat_send(client_fd, msg);
-    chat_msg_destroy(msg);
+    chat_client_login(client_fd, argv[2]);
     /*-----------------------------------------------------------------------------
      *  Start threads.
      *-----------------------------------------------------------------------------*/
     pthread_create(&tid[0], NULL, (void *) chat_recv_thread, (void *) client_fd);
     pthread_create(&tid[1], NULL, (void *) process_thread, (void *) client_fd);
     send_daemon(client_fd);                              /* Loop here */
+    /*-----------------------------------------------------------------------------
+     *  When out of loop, send login message to server.
+     *-----------------------------------------------------------------------------*/
+    chat_client_logout(client_fd);
     /*-----------------------------------------------------------------------------
      *  ChatSys finalization.
      *-----------------------------------------------------------------------------*/
