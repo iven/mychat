@@ -106,6 +106,19 @@ on_delete_event ( GtkWidget *widget, GdkEvent *event, gpointer data )
 
 /* 
  * ===  FUNCTION  ======================================================================
+ *         Name:  show_welcome_message
+ *  Description:  Show welcome message in the @text_buffer.
+ * =====================================================================================
+ */
+    static void
+show_welcome_message ( GtkTextBuffer *text_buffer )
+{
+    gtk_text_buffer_set_text(text_buffer, "Welcome to ChatSys 0.1!\nType '/list' for online users.\n", -1);
+    return ;
+}       /* -----  end of static function show_welcome_message  ----- */
+
+/* 
+ * ===  FUNCTION  ======================================================================
  *         Name:  main
  *  Description:  main function
  * =====================================================================================
@@ -163,6 +176,7 @@ main ( int argc, char *argv[] )
      *  Send login message to server.
      *-----------------------------------------------------------------------------*/
     chat_client_login(client_fd, argv[2]);
+    show_welcome_message(text_buffer);
     /*-----------------------------------------------------------------------------
      *  Start threads.
      *-----------------------------------------------------------------------------*/
