@@ -18,9 +18,8 @@ export PREFIX	= /usr
 LIBCHATSYS_DIR  = ./libchatsys
 
 CC              = gcc
-CFLAGS          = -c -g -Wall
+CFLAGS          = -c -g -Wall -I$(LIBCHATSYS_DIR)
 GTKCFLAGS       = `pkg-config gtk+-2.0 --cflags`
-INCLUDES        = -I$(LIBCHATSYS_DIR)
 LFLAGS          = -g
 LIBS            = -L$(LIBCHATSYS_DIR) -lm -lpthread -lchatsys
 GTKLIBS         = `pkg-config gtk+-2.0 --libs`
@@ -33,7 +32,7 @@ TARGETS	= chat_server chat_client_cli chat_client_gui
 all:	$(TARGETS)
 
 %.o:	%.c
-			$(CC) $(CFLAGS) $(GTKCFLAGS) $(INCLUDES) $*.c
+			$(CC) $(CFLAGS) $(GTKCFLAGS) $*.c
 
 #---------- target 1 -------------------------------------
 chat_client_cli:	client_cli.o libchatsys.so
