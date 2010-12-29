@@ -1,3 +1,8 @@
 # + New Features
 # - Bugs
 # * Modification
+
+* Rename Msg_queue to Chat_msg_queue.
++ SN support.
++ ACK support.
++ Hold message support.
