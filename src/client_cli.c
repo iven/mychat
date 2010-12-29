@@ -111,7 +111,7 @@ send_daemon ( int client_fd )
 main (int argc, char *argv[])
 {
     int client_fd;
-    pthread_t tid[2];
+    pthread_t tid;
 
     if (argc != 3) {
         printf("Usage: chat_client_cli hostname username.\n");
@@ -134,10 +134,10 @@ main (int argc, char *argv[])
      *-----------------------------------------------------------------------------*/
     chat_client_login(client_fd, argv[2]);
     /*-----------------------------------------------------------------------------
-     *  Start threads.
+     *  Create processing thread.
      *-----------------------------------------------------------------------------*/
-    pthread_create(&tid[0], NULL, (void *) chat_recv_thread, (void *) client_fd);
-    pthread_create(&tid[1], NULL, (void *) process_thread, (void *) client_fd);
+    pthread_create(&tid, NULL, (void *) process_thread,
+            (void *) (unsigned long) client_fd);
     send_daemon(client_fd);                              /* Loop here */
     /*-----------------------------------------------------------------------------
      *  When out of loop, send login message to server.

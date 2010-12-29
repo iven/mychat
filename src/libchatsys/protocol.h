@@ -34,9 +34,10 @@ int chat_protocol_exit ( int my_fd );
 int chat_recv_thread ( int fd );
 
 Chat_msg * chat_pop_message ( void );
-int chat_push_message ( Chat_msg *msg );
 
 int chat_client_login ( int fd, const char *username );
 int chat_client_logout ( int fd );
+
+int chat_server_main ( int server_fd );
 
 #endif   /* ----- #ifndef PROTOCOL_INC  ----- */

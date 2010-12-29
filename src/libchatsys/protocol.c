@@ -19,11 +19,77 @@
 #include    <stdio.h>
 #include    <stdlib.h>
 #include    <string.h>
+#include    <pthread.h> 
 #include    "protocol.h"
 #include    "queue.h"
 
-static Queue *msg_queue;
+static Queue *msg_queue_in;
+static Queue *msg_queue_out;
 static Event *msg_event;
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  chat_pop_message
+ *  Description:  Pop new message from the queue.
+ * =====================================================================================
+ */
+    Chat_msg *
+chat_pop_message ( void )
+{
+    Queue_node *node;
+    Chat_msg *msg;
+
+    event_wait(msg_event);                      /* Wait for new message event */
+    node = queue_pop(msg_queue_in);             /* Pop the node */
+    if (node == NULL) {
+        return NULL;
+    }
+    msg = node->data;
+    queue_node_destroy(node, NULL);
+    return msg;
+}                                               /* -----  end of function chat_pop_message  ----- */
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  chat_push_message
+ *  Description:  Push new message to the queue.
+ * =====================================================================================
+ */
+    static int
+chat_push_message ( Chat_msg *msg )
+{
+    Queue_node *node;
+
+    node = queue_node_new(msg);                 /* Create a new node */
+    if (node == NULL) {
+        chat_msg_destroy(msg);
+        return -1;
+    }
+    queue_push(msg_queue_in, node);             /* Push the node */
+    event_post(msg_event);                      /* Post a new message event */
+    return 0;
+}                                               /* -----  end of function chat_push_message  ----- */
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  chat_server_main
+ *  Description:  Wait for clients and create receiving threads for them.
+ * =====================================================================================
+ */
+    int
+chat_server_main ( int server_fd )
+{
+    int client_fd;
+    pthread_t tid;
+    while (1) {
+        client_fd = chat_server_accept_client(server_fd);
+        if (client_fd < 0) {
+            exit(1);
+        }
+        pthread_create(&tid, NULL,
+                (void *) chat_recv_thread, (void *) (unsigned long) client_fd);
+    }
+}                                               /* -----  end of static function chat_server_main  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -35,6 +101,7 @@ static Event *msg_event;
 chat_protocol_init ( Chat_type type, int server_port, const char *server_name )
 {
     int my_fd;
+    pthread_t tid;
     if (type == CHAT_SERVER) {                  /* server init */
         my_fd = chat_server_init(server_port);
     } else if (type == CHAT_CLIENT) {           /* client init */
@@ -42,6 +109,8 @@ chat_protocol_init ( Chat_type type, int server_port, const char *server_name )
             return -1;
         }
         my_fd = chat_client_init(server_port, server_name);
+        pthread_create(&tid, NULL,              /* Create receiving thread */
+                (void *) chat_recv_thread, (void *) (unsigned long) my_fd);
     } else {                                    /* what's this? */
         return -2;
     }
@@ -49,14 +118,17 @@ chat_protocol_init ( Chat_type type, int server_port, const char *server_name )
         return -3;
     }
 
-    if ((msg_queue = queue_new()) == NULL) {    /* init message queue */
+    if ((msg_queue_in = queue_new()) == NULL) { /* init in message queue */
         return -4;
     }
-    if ((msg_event = event_new(0)) == NULL) { /* init new message event */
+    if ((msg_queue_out = queue_new()) == NULL) {/* init out message queue */
         return -5;
     }
+    if ((msg_event = event_new(0)) == NULL) {   /* init new message event */
+        return -6;
+    }
     return my_fd;
-}       /* -----  end of function chat_protocol_init  ----- */
+}                                               /* -----  end of function chat_protocol_init  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -68,12 +140,14 @@ chat_protocol_init ( Chat_type type, int server_port, const char *server_name )
 chat_protocol_exit ( int my_fd )
 {
     event_destroy(msg_event);                   /* destroy new message event */
-    queue_destroy(msg_queue,                    /* destroy message queue */
+    queue_destroy(msg_queue_in,                 /* destroy in message queue */
+            (QUEUE_DESTROY) chat_msg_destroy);
+    queue_destroy(msg_queue_out,                /* destroy out message queue */
             (QUEUE_DESTROY) chat_msg_destroy);
     chat_exit(my_fd);                           /* exit server or client */
 
     return 0;
-}       /* -----  end of function chat_protocol_exit  ----- */
+}                                               /* -----  end of function chat_protocol_exit  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -100,50 +174,7 @@ chat_recv_thread ( int fd )
         msg->fd = fd;
         chat_push_message(msg);                 /* Push message to the queue */
     }
-}       /* -----  end of static function chat_recv_thread  ----- */
-
-/* 
- * ===  FUNCTION  ======================================================================
- *         Name:  chat_pop_message
- *  Description:  Pop new message from the queue.
- * =====================================================================================
- */
-    Chat_msg *
-chat_pop_message ( void )
-{
-    Queue_node *node;
-    Chat_msg *msg;
-
-    event_wait(msg_event);                      /* Wait for new message event */
-    node = queue_pop(msg_queue);                /* Pop the node */
-    if (node == NULL) {
-        return NULL;
-    }
-    msg = node->data;
-    queue_node_destroy(node, NULL);
-    return msg;
-}       /* -----  end of function chat_pop_message  ----- */
-
-/* 
- * ===  FUNCTION  ======================================================================
- *         Name:  chat_push_message
- *  Description:  Push new message to the queue.
- * =====================================================================================
- */
-    int
-chat_push_message ( Chat_msg *msg )
-{
-    Queue_node *node;
-
-    node = queue_node_new(msg);                 /* Create a new node */
-    if (node == NULL) {
-        chat_msg_destroy(msg);
-        return -1;
-    }
-    queue_push(msg_queue, node);                /* Push the node */
-    event_post(msg_event);                      /* Post a new message event */
-    return 0;
-}       /* -----  end of function chat_push_message  ----- */
+}                                               /* -----  end of static function chat_recv_thread  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -160,7 +191,7 @@ chat_client_login ( int fd, const char *username )
     chat_send(fd, msg);
     chat_msg_destroy(msg);
     return 0;
-}       /* -----  end of function chat_client_login  ----- */
+}                                               /* -----  end of function chat_client_login  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -176,4 +207,4 @@ chat_client_logout ( int fd )
     chat_send(fd, msg);
     chat_msg_destroy(msg);
     return 0;
-}       /* -----  end of function chat_client_logout  ----- */
+}                                               /* -----  end of function chat_client_logout  ----- */

@@ -133,7 +133,7 @@ main ( int argc, char *argv[] )
     GtkTextBuffer *text_buffer;
 
     int client_fd;
-    pthread_t tid[2];
+    pthread_t tid;
 
     if (argc != 3) {
         printf("Usage: chat_client_cli hostname username.\n");
@@ -178,10 +178,9 @@ main ( int argc, char *argv[] )
     chat_client_login(client_fd, argv[2]);
     show_welcome_message(text_buffer);
     /*-----------------------------------------------------------------------------
-     *  Start threads.
+     *  Create processing thread.
      *-----------------------------------------------------------------------------*/
-    pthread_create(&tid[0], NULL, (void *) chat_recv_thread, GINT_TO_POINTER(client_fd));
-    pthread_create(&tid[1], NULL, (void *) process_thread, (void *) text_buffer);
+    pthread_create(&tid, NULL, (void *) process_thread, (void *) text_buffer);
 
     gtk_main();
     return EXIT_SUCCESS;

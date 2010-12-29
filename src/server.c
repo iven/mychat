@@ -90,7 +90,7 @@ process_thread ( void )
     int
 main (void)
 {
-    int server_fd, client_fd;
+    int server_fd;
     pthread_t tid;
 
     user_queue = user_queue_new();              /* User information queue */
@@ -107,15 +107,9 @@ main (void)
      *-----------------------------------------------------------------------------*/
     pthread_create(&tid, NULL, (void *) process_thread, NULL);
     /*-----------------------------------------------------------------------------
-     *  Wait for clients and create receiving threads for them.
+     *  Accept clients and receive messages
      *-----------------------------------------------------------------------------*/
-    while (1) {
-        client_fd = chat_server_accept_client(server_fd);
-        if (client_fd < 0) {
-            exit(1);
-        }
-        pthread_create(&tid, NULL, (void *) chat_recv_thread, (void *) client_fd);
-    }
+    chat_server_main(server_fd);
     /*-----------------------------------------------------------------------------
      *  ChatSys finalization.
      *-----------------------------------------------------------------------------*/
