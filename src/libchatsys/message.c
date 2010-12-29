@@ -23,7 +23,7 @@
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  chat_msg_new
- *  Description:  
+ *  Description:  Create a new chat message.
  * =====================================================================================
  */
     Chat_msg *
@@ -32,6 +32,25 @@ chat_msg_new ( void )
     Chat_msg *msg = (Chat_msg *) calloc(1, sizeof(Chat_msg));
     return msg;
 }       /* -----  end of function chat_msg_new  ----- */
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  chat_msg_new_from_msg
+ *  Description:  Create a new chat message from existing message.
+ * =====================================================================================
+ */
+    Chat_msg *
+chat_msg_new_from_msg ( Chat_msg *old_msg )
+{
+    Chat_msg *msg = (Chat_msg *) calloc(1, sizeof(Chat_msg));
+    msg->version = old_msg->version;
+    msg->type = old_msg->type;
+    msg->sn = old_msg->sn;
+    msg->fd = old_msg->fd;
+    msg->len = old_msg->len;
+    memcpy(msg->text, old_msg->text, MAX_TEXT_LEN);
+    return msg;
+}       /* -----  end of function chat_msg_new_from_msg  ----- */
+
 
 /* 
  * ===  FUNCTION  ======================================================================

@@ -52,6 +52,7 @@ struct chat_pdu {
 typedef struct chat_pdu Chat_pdu;
 
 Chat_msg *chat_msg_new(void);
+Chat_msg * chat_msg_new_from_msg ( Chat_msg *old_msg );
 int chat_msg_destroy (Chat_msg *msg);
 
 int chat_msg_parse(const Chat_pdu *pdu, Chat_msg *msg);

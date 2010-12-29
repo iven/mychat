@@ -44,7 +44,7 @@ process_thread ( void )
     char buf[MAX_TEXT_LEN + MAX_NAME_LEN + 2];
     char *names;
     while (1) {
-        msg = chat_pop_message();               /* Wait for messages */
+        msg = chat_msg_pop();                   /* Wait for messages */
         if (msg->type != CHAT_MSG_ACK) {
             msg->sn = ++sn;
         }
@@ -71,7 +71,7 @@ process_thread ( void )
                 printf("User %s requested user list.\n", user_info->name);
                 strcpy(msg->text, names);
                 free(names);
-                chat_send(msg->fd, msg);
+                chat_msg_push(msg);
                 break;
             default:
                 break;

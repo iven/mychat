@@ -36,7 +36,7 @@ process_thread ( void *data )
     GtkTextBuffer *text_buffer = GTK_TEXT_BUFFER(data);
     GtkTextIter text_iter;
     while (1) {
-        msg = chat_pop_message();
+        msg = chat_msg_pop();
         gtk_text_buffer_get_end_iter(text_buffer, &text_iter);
         switch ( msg->type ) {
             case CHAT_MSG_CHAT:                 /* Chat message */
@@ -73,7 +73,8 @@ on_entry_activate ( GtkWidget *entry, gpointer data )
         strcpy(msg->text, text);
     }
     msg->sn = ++sn;
-    chat_send(client_fd, msg);
+    msg->fd = client_fd;
+    chat_msg_push(msg);
     chat_msg_destroy(msg);
 
     gtk_entry_set_text(GTK_ENTRY(entry), "");   /* Clear the entry */

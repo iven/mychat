@@ -19,7 +19,7 @@
 #include    <stdlib.h>
 #include    <stdio.h>
 #include    <string.h>
-#include    "sock_wrapper.h"
+#include    "protocol.h"
 #include    "user_info.h"
 
 /* 
@@ -180,7 +180,8 @@ user_queue_send_to_all ( User_queue *queue, Chat_msg *msg )
     Queue_node *node;
     queue_foreach(queue, node) {
         user_info = (User_info *) node->data;
-        chat_send(user_info->fd, msg);
+        msg->fd = user_info->fd;
+        chat_msg_push(msg);
     }
     return 0;
 }       /* -----  end of function user_queue_send_to_all  ----- */

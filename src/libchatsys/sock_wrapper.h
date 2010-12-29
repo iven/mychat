@@ -3,7 +3,7 @@
  *
  *       Filename:  sock_wrapper.h
  *
- *    Description:  
+ *    Description:  Interface of socket wrapper.
  *
  *        Version:  1.0
  *        Created:  2010年11月19日 20时54分32秒

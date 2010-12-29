@@ -49,7 +49,7 @@ process_thread ( void )
 {
     Chat_msg *msg;
     while (1) {
-        msg = chat_pop_message();
+        msg = chat_msg_pop();
         printf("\r");                           /* Go to start of line */
         switch ( msg->type ) {
             case CHAT_MSG_CHAT:                 /* Chat message */
@@ -92,7 +92,8 @@ send_daemon ( int client_fd )
                 strcpy(msg->text, text);
             }
             msg->sn = ++sn;
-            chat_send(client_fd, msg);
+            msg->fd = client_fd;
+            chat_msg_push(msg);
         } else if (text[i] == EOF) {            /* Exit */
             break;
         }
@@ -104,7 +105,7 @@ send_daemon ( int client_fd )
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  main
- *  Description:  
+ *  Description:  main function
  * =====================================================================================
  */
     int

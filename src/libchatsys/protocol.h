@@ -31,9 +31,8 @@ typedef enum chat_type Chat_type;
 int chat_protocol_init ( Chat_type type, int server_port, const char *server_name );
 int chat_protocol_exit ( int my_fd );
 
-int chat_recv_thread ( int fd );
-
-Chat_msg * chat_pop_message ( void );
+int chat_msg_push ( Chat_msg *msg );
+Chat_msg *chat_msg_pop ( void );
 
 int chat_client_login ( int fd, const char *username );
 int chat_client_logout ( int fd );
