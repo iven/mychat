@@ -33,6 +33,7 @@
 process_thread ( void *data )
 {
     Chat_msg *msg;
+    gchar buf[MAX_TEXT_LEN + 1];
     GtkTextBuffer *text_buffer = GTK_TEXT_BUFFER(data);
     GtkTextIter text_iter;
     while (1) {
@@ -41,9 +42,8 @@ process_thread ( void *data )
         switch ( msg->type ) {
             case CHAT_MSG_CHAT:                 /* Chat message */
             case CHAT_MSG_LIST:                 /* List users */
-                gtk_text_buffer_insert(text_buffer, &text_iter, msg->text, -1);
-                gtk_text_buffer_get_end_iter(text_buffer, &text_iter);
-                gtk_text_buffer_insert(text_buffer, &text_iter, "\n", -1);
+                sprintf(buf, "%s\n", msg->text);
+                gtk_text_buffer_insert(text_buffer, &text_iter, buf, -1);
                 break;
         }               /* -----  end switch  ----- */
         chat_msg_destroy(msg);
