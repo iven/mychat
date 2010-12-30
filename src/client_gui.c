@@ -61,7 +61,6 @@ process_thread ( void *data )
 on_entry_activate ( GtkWidget *entry, gpointer data )
 {
     int client_fd = GPOINTER_TO_INT(data);
-    static int sn = 0;
     const gchar *text;
 
     Chat_msg *msg = chat_msg_new();
@@ -72,7 +71,6 @@ on_entry_activate ( GtkWidget *entry, gpointer data )
         msg->type = CHAT_MSG_CHAT;
         strcpy(msg->text, text);
     }
-    msg->sn = ++sn;
     msg->fd = client_fd;
     chat_msg_push(msg);
     chat_msg_destroy(msg);

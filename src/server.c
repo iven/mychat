@@ -38,16 +38,12 @@ static Chat_user_queue *user_queue;
     static int
 process_thread ( void )
 {
-    static int sn = 0;
     Chat_msg *msg;
     Chat_user *user;
     char buf[MAX_TEXT_LEN + MAX_NAME_LEN + 2];
     char *names;
     while (1) {
         msg = chat_msg_pop();                   /* Wait for messages */
-        if (msg->type != CHAT_MSG_ACK) {
-            msg->sn = ++sn;
-        }
         switch ( msg->type ) {
             case CHAT_MSG_LOGIN:                /* Add user to queue */
                 printf("User %s logged in!\n", msg->text);
