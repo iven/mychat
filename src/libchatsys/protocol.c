@@ -28,6 +28,26 @@ static Chat_msg_queue *msg_queue_out;
 
 /* 
  * ===  FUNCTION  ======================================================================
+ *         Name:  chat_msg_push_ack
+ *  Description:  Push ACK message to the out queue.
+ * =====================================================================================
+ */
+    static int
+chat_msg_push_ack ( Chat_msg *msg )
+{
+    Chat_msg *ack_msg;
+    ack_msg = chat_msg_new_from_msg(msg);
+    if (ack_msg == NULL) {
+        return -1;
+    }
+    ack_msg->type = CHAT_MSG_ACK;
+    chat_msg_push(ack_msg);
+    chat_msg_destroy(ack_msg);
+    return 0;
+}       /* -----  end of static function chat_msg_push_ack  ----- */
+
+/* 
+ * ===  FUNCTION  ======================================================================
  *         Name:  chat_recv_thread
  *  Description:  Thread for receive messages.
  * =====================================================================================
@@ -51,6 +71,7 @@ chat_recv_thread ( int fd )
         msg->fd = fd;
         if (msg->type != CHAT_MSG_ACK) {
             chat_msg_queue_push(msg_queue_in, msg);
+            chat_msg_push_ack(msg);
         }
     }
 }                                               /* -----  end of static function chat_recv_thread  ----- */
