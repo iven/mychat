@@ -2,7 +2,4 @@
 # - Bugs
 # * Modification
 
-* Rename User_info to Chat_user.
-+ SN support.
-+ ACK support.
 + Hold message support.

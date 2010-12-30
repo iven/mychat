@@ -74,7 +74,6 @@ process_thread ( void )
     static void
 send_daemon ( int client_fd )
 {
-    static int sn = 0;
     int i;
     Chat_msg *msg = chat_msg_new();
     char text[MAX_TEXT_LEN];
@@ -91,7 +90,6 @@ send_daemon ( int client_fd )
                 msg->type = CHAT_MSG_CHAT;
                 strcpy(msg->text, text);
             }
-            msg->sn = ++sn;
             msg->fd = client_fd;
             chat_msg_push(msg);
         } else if (text[i] == EOF) {            /* Exit */

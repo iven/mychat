@@ -28,6 +28,26 @@ static Chat_msg_queue *msg_queue_out;
 
 /* 
  * ===  FUNCTION  ======================================================================
+ *         Name:  chat_msg_push_ack
+ *  Description:  Push ACK message to the out queue.
+ * =====================================================================================
+ */
+    static int
+chat_msg_push_ack ( Chat_msg *msg )
+{
+    Chat_msg *ack_msg;
+    ack_msg = chat_msg_new_from_msg(msg);
+    if (ack_msg == NULL) {
+        return -1;
+    }
+    ack_msg->type = CHAT_MSG_ACK;
+    chat_msg_push(ack_msg);
+    chat_msg_destroy(ack_msg);
+    return 0;
+}       /* -----  end of static function chat_msg_push_ack  ----- */
+
+/* 
+ * ===  FUNCTION  ======================================================================
  *         Name:  chat_recv_thread
  *  Description:  Thread for receive messages.
  * =====================================================================================
@@ -49,7 +69,10 @@ chat_recv_thread ( int fd )
             return 0;
         }
         msg->fd = fd;
-        chat_msg_queue_push(msg_queue_in, msg); /* Push message to the queue */
+        if (msg->type != CHAT_MSG_ACK) {
+            chat_msg_queue_push(msg_queue_in, msg);
+            chat_msg_push_ack(msg);
+        }
     }
 }                                               /* -----  end of static function chat_recv_thread  ----- */
 
@@ -197,11 +220,16 @@ chat_client_logout ( int fd )
     int
 chat_msg_push ( Chat_msg *origin_msg )
 {
+    static int sn = 0;
     /*-----------------------------------------------------------------------------
      *  Give it a copy before pushing, because members of origin_msg may be
      *  changed after pushing.
      *-----------------------------------------------------------------------------*/
     Chat_msg *msg = chat_msg_new_from_msg(origin_msg);
+
+    if (msg->type != CHAT_MSG_ACK) {
+        msg->sn = sn++;
+    }
     chat_msg_queue_push(msg_queue_out, msg);    /* Just push it to the out queue */
     return 0;
 }       /* -----  end of function chat_msg_push  ----- */
