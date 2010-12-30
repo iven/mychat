@@ -31,7 +31,7 @@ all:	$(TARGETS)
 			$(CC) $(CFLAGS) $*.c
 
 #---------- target 1 -------------------------------------
-libchatsys.so.1.0.0 :	message.o sock_wrapper.o event.o queue.o protocol.o user_info.o msg_queue.o
+libchatsys.so.1.0.0 :	message.o sock_wrapper.o event.o queue.o protocol.o user_queue.o msg_queue.o
 	$(CC) $(LFLAGS) -o $@ $^  $(SYS_LIBS)
 
 #---------- target 2 -------------------------------------

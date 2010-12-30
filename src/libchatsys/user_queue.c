@@ -1,9 +1,9 @@
 /*
  * =====================================================================================
  *
- *       Filename:  user_info.c
+ *       Filename:  user_queue.c
  *
- *    Description:  Implemention of user information.
+ *    Description:  Implemention of user queue.
  *
  *        Version:  1.0
  *        Created:  2010年12月18日 01时23分43秒
@@ -20,192 +20,192 @@
 #include    <stdio.h>
 #include    <string.h>
 #include    "protocol.h"
-#include    "user_info.h"
+#include    "user_queue.h"
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  user_info_new
- *  Description:  Create a new user information struct.
+ *         Name:  chat_user_new
+ *  Description:  Create a new user struct.
  * =====================================================================================
  */
-    User_info *
-user_info_new ( int fd, const char *name )
+    Chat_user *
+chat_user_new ( int fd, const char *name )
 {
-    User_info *info;
-    info = (User_info *) calloc(1, sizeof(User_info));
-    if (info == NULL) {
-        perror("user_info_new");
+    Chat_user *user;
+    user = (Chat_user *) calloc(1, sizeof(Chat_user));
+    if (user == NULL) {
+        perror("chat_user_new");
         return NULL;
     }
-    info->fd = fd;
-    strncpy(info->name, name, MAX_NAME_LEN);
-    return info;
-}       /* -----  end of function user_info_new  ----- */
+    user->fd = fd;
+    strncpy(user->name, name, MAX_NAME_LEN);
+    return user;
+}                                               /* -----  end of function chat_user_new  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  user_info_destroy
- *  Description:  Destroy a user information struct.
+ *         Name:  chat_user_destroy
+ *  Description:  Destroy a user struct.
  * =====================================================================================
  */
     int
-user_info_destroy ( User_info *info )
+chat_user_destroy ( Chat_user *user )
 {
-    if (info == NULL) {
+    if (user == NULL) {
         return -1;
     }
-    free(info);
+    free(user);
     return 0;
-}       /* -----  end of function user_info_destroy  ----- */
+}                                               /* -----  end of function chat_user_destroy  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  user_queue_new
- *  Description:  Create an user information queue.
+ *         Name:  chat_user_queue_new
+ *  Description:  Create an user queue.
  * =====================================================================================
  */
-    User_queue *
-user_queue_new ( void )
+    Chat_user_queue *
+chat_user_queue_new ( void )
 {
-    User_queue *queue = queue_new();
+    Chat_user_queue *queue = queue_new();
     return queue;
-}       /* -----  end of function user_queue_new  ----- */
+}                                               /* -----  end of function chat_user_queue_new  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  user_queue_destroy
- *  Description:  Destroy an user information queue.
+ *         Name:  chat_user_queue_destroy
+ *  Description:  Destroy an user queue.
  * =====================================================================================
  */
     int
-user_queue_destroy ( User_queue *queue )
+chat_user_queue_destroy ( Chat_user_queue *queue )
 {
     int retval;
     if (queue == NULL) {
         return -1;
     }
-    retval = queue_destroy(queue, (QUEUE_DESTROY) user_info_destroy);
+    retval = queue_destroy(queue, (QUEUE_DESTROY) chat_user_destroy);
     return retval;
-}       /* -----  end of function user_queue_destroy  ----- */
+}                                               /* -----  end of function chat_user_queue_destroy  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  user_queue_add
- *  Description:  Add an user information to the queue.
+ *         Name:  chat_user_queue_add
+ *  Description:  Add an @user to the queue.
  * =====================================================================================
  */
     int
-user_queue_add ( User_queue *queue, User_info *user_info )
+chat_user_queue_add ( Chat_user_queue *queue, Chat_user *user )
 {
     Queue_node *node;
-    if (queue == NULL || user_info == NULL) {
+    if (queue == NULL || user == NULL) {
         return -1;
     }
-    if ((node = queue_node_new(user_info)) == NULL) {
+    if ((node = queue_node_new(user)) == NULL) {
         return -2;
     }
     queue_push(queue, node);
     return 0;
-}       /* -----  end of static function user_queue_add  ----- */
+}                                               /* -----  end of static function chat_user_queue_add  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  user_queue_remove
- *  Description:  Remove @user_info from @queue.
+ *         Name:  chat_user_queue_remove
+ *  Description:  Remove @user from @queue.
  * =====================================================================================
  */
     int
-user_queue_remove ( User_queue *queue, User_info *user_info )
+chat_user_queue_remove ( Chat_user_queue *queue, Chat_user *user )
 {
     Queue_node *node, *node_next;
-    if (queue == NULL || user_info == NULL) {
+    if (queue == NULL || user == NULL) {
         return -1;
     }
     queue_foreach(queue, node) {
         /*-----------------------------------------------------------------------------
          *  When it's the first node
          *-----------------------------------------------------------------------------*/
-        if ((queue->tail == node) && (node->data == user_info)) {
+        if ((queue->tail == node) && (node->data == user)) {
             node_next = node->next;
-            queue_node_destroy(node, (QUEUE_DESTROY) user_info_destroy);
+            queue_node_destroy(node, (QUEUE_DESTROY) chat_user_destroy);
             queue->tail = node_next;
             return 0;
         }
         /*-----------------------------------------------------------------------------
          *  OtherWise
          *-----------------------------------------------------------------------------*/
-        if ((node->next != NULL) && (node->next->data == user_info)) {
+        if ((node->next != NULL) && (node->next->data == user)) {
             node_next = node->next->next;
-            queue_node_destroy(node->next, (QUEUE_DESTROY) user_info_destroy);
+            queue_node_destroy(node->next, (QUEUE_DESTROY) chat_user_destroy);
             node->next = node_next;
             return 0;
         }
     }
     return -2;
-}       /* -----  end of function user_queue_remove  ----- */
+}                                               /* -----  end of function chat_user_queue_remove  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  user_queue_get_from_fd
- *  Description:  Get user information struct from @fd.
+ *         Name:  chat_user_queue_get_from_fd
+ *  Description:  Get user struct from @fd.
  * =====================================================================================
  */
-    User_info *
-user_queue_get_from_fd ( User_queue *queue, int fd )
+    Chat_user *
+chat_user_queue_get_from_fd ( Chat_user_queue *queue, int fd )
 {
-    User_info *user_info = NULL;
+    Chat_user *user = NULL;
     Queue_node *node;
     if (queue == NULL || fd < 0) {
         return NULL;
     }
     queue_foreach(queue, node) {
-        user_info = (User_info *) node->data;
-        if (user_info->fd == fd) {
-            return user_info;
+        user = (Chat_user *) node->data;
+        if (user->fd == fd) {
+            return user;
         }
     }
     return NULL;
-}       /* -----  end of function user_queue_get_from_fd  ----- */
+}                                               /* -----  end of function chat_user_queue_get_from_fd  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  user_queue_send_to_all
+ *         Name:  chat_user_queue_send_to_all
  *  Description:  Send @msg to all users on the @queue.
  * =====================================================================================
  */
     int
-user_queue_send_to_all ( User_queue *queue, Chat_msg *msg )
+chat_user_queue_send_to_all ( Chat_user_queue *queue, Chat_msg *msg )
 {
-    User_info *user_info = NULL;
+    Chat_user *user = NULL;
     Queue_node *node;
     queue_foreach(queue, node) {
-        user_info = (User_info *) node->data;
-        msg->fd = user_info->fd;
+        user = (Chat_user *) node->data;
+        msg->fd = user->fd;
         chat_msg_push(msg);
     }
     return 0;
-}       /* -----  end of function user_queue_send_to_all  ----- */
+}                                               /* -----  end of function chat_user_queue_send_to_all  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  user_queue_get_names
+ *         Name:  chat_user_queue_get_names
  *  Description:  Get all user names on the @queue.
  * =====================================================================================
  */
     char *
-user_queue_get_names ( User_queue *queue )
+chat_user_queue_get_names ( Chat_user_queue *queue )
 {
     char *names;
     Queue_node *node;
-    User_info *user_info = NULL;
+    Chat_user *user = NULL;
 
     if (queue == NULL) {
         return NULL;
     }
     names = (char *) calloc(1, MAX_TEXT_LEN + MAX_NAME_LEN);
     queue_foreach(queue, node) {
-        user_info = (User_info *) node->data;
-        sprintf(names + strlen(names), "%s ", user_info->name);
+        user = (Chat_user *) node->data;
+        sprintf(names + strlen(names), "%s ", user->name);
         if (strlen(names) >= MAX_TEXT_LEN) {
             names[MAX_TEXT_LEN - 1] = '\0';
             return names;
@@ -213,4 +213,4 @@ user_queue_get_names ( User_queue *queue )
     }
     names[strlen(names) - 1] = 0;
     return names;
-}       /* -----  end of function user_queue_get_names  ----- */
+}                                               /* -----  end of function chat_user_queue_get_names  ----- */

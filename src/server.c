@@ -23,11 +23,11 @@
 #include    <sys/wait.h>
 #include    <unistd.h>
 #include    <pthread.h> 
-#include    "user_info.h"
+#include    "user_queue.h"
 #include    "protocol.h"
 #include    "queue.h"
 
-static User_queue *user_queue;
+static Chat_user_queue *user_queue;
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -40,7 +40,7 @@ process_thread ( void )
 {
     static int sn = 0;
     Chat_msg *msg;
-    User_info *user_info;
+    Chat_user *user;
     char buf[MAX_TEXT_LEN + MAX_NAME_LEN + 2];
     char *names;
     while (1) {
@@ -51,35 +51,35 @@ process_thread ( void )
         switch ( msg->type ) {
             case CHAT_MSG_LOGIN:                /* Add user to queue */
                 printf("User %s logged in!\n", msg->text);
-                user_info = user_info_new(msg->fd, msg->text);
-                user_queue_add(user_queue, user_info);
+                user = chat_user_new(msg->fd, msg->text);
+                chat_user_queue_add(user_queue, user);
                 break;
             case CHAT_MSG_LOGOUT:               /* Remove user from queue */
-                user_info = user_queue_get_from_fd(user_queue, msg->fd);
-                printf("User %s logged out!\n", user_info->name);
-                user_queue_remove(user_queue, user_info);
+                user = chat_user_queue_get_from_fd(user_queue, msg->fd);
+                printf("User %s logged out!\n", user->name);
+                chat_user_queue_remove(user_queue, user);
                 break;
             case CHAT_MSG_CHAT:                 /* Prefix username and send to all */
-                user_info = user_queue_get_from_fd(user_queue, msg->fd);
-                sprintf(buf, "%s: %s", user_info->name, msg->text);
+                user = chat_user_queue_get_from_fd(user_queue, msg->fd);
+                sprintf(buf, "%s: %s", user->name, msg->text);
                 buf[MAX_TEXT_LEN - 1] = '\0';
                 strcpy(msg->text, buf);
-                user_queue_send_to_all(user_queue, msg);
+                chat_user_queue_send_to_all(user_queue, msg);
                 break;
             case CHAT_MSG_LIST:                 /* Get usernames and send back */
-                names = user_queue_get_names(user_queue);
-                printf("User %s requested user list.\n", user_info->name);
+                names = chat_user_queue_get_names(user_queue);
+                printf("User %s requested user list.\n", user->name);
                 strcpy(msg->text, names);
                 free(names);
                 chat_msg_push(msg);
                 break;
             default:
                 break;
-        }               /* -----  end switch  ----- */
+        }                                       /* -----  end switch  ----- */
         chat_msg_destroy(msg);
     }
     return 0;
-}       /* -----  end of static function process_thread  ----- */
+}                                               /* -----  end of static function process_thread  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -93,7 +93,7 @@ main (void)
     int server_fd;
     pthread_t tid;
 
-    user_queue = user_queue_new();              /* User information queue */
+    user_queue = chat_user_queue_new();         /* User information queue */
     /*-----------------------------------------------------------------------------
      *  ChatSys initialization.
      *-----------------------------------------------------------------------------*/
@@ -117,4 +117,4 @@ main (void)
         exit(1);
     }
     return 0;
-}       /* -----  end of function main  ----- */
+}                                               /* -----  end of function main  ----- */
