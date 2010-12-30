@@ -26,11 +26,11 @@ struct msg_queue {
     Queue *queue;
     Event *event;
 };               /* ----------  end of struct msg_queue  ---------- */
-typedef struct msg_queue Msg_queue;
+typedef struct msg_queue Chat_msg_queue;
 
-Msg_queue * chat_msg_queue_new ( void );
-int chat_msg_queue_destroy ( Msg_queue *msg_queue );
-Chat_msg * chat_msg_queue_pop ( Msg_queue *msg_queue );
-int chat_msg_queue_push ( Msg_queue *msg_queue, Chat_msg *msg );
+Chat_msg_queue * chat_msg_queue_new ( void );
+int chat_msg_queue_destroy ( Chat_msg_queue *msg_queue );
+Chat_msg * chat_msg_queue_pop ( Chat_msg_queue *msg_queue );
+int chat_msg_queue_push ( Chat_msg_queue *msg_queue, Chat_msg *msg );
 
 #endif   /* ----- #ifndef MSG_QUEUE_INC  ----- */

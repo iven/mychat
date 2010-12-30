@@ -24,17 +24,17 @@
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  chat_msg_queue_new
- *  Description:  Create a new msg_queue.
+ *  Description:  Create a new message queue.
  * =====================================================================================
  */
-    Msg_queue *
+    Chat_msg_queue *
 chat_msg_queue_new ( void )
 {
-    Msg_queue *msg_queue;
+    Chat_msg_queue *msg_queue;
     Queue *queue;
     Event *event;
 
-    msg_queue = (Msg_queue *) calloc(1, sizeof(Msg_queue));
+    msg_queue = (Chat_msg_queue *) calloc(1, sizeof(Chat_msg_queue));
     if (msg_queue == NULL) {
         goto fail_msg_queue;
     }
@@ -59,11 +59,11 @@ fail_msg_queue:
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  chat_msg_queue_destroy
- *  Description:  Destroy a msg_queue.
+ *  Description:  Destroy a message queue.
  * =====================================================================================
  */
     int
-chat_msg_queue_destroy ( Msg_queue *msg_queue )
+chat_msg_queue_destroy ( Chat_msg_queue *msg_queue )
 {
     if (msg_queue == NULL ||
             msg_queue->queue == NULL ||
@@ -83,7 +83,7 @@ chat_msg_queue_destroy ( Msg_queue *msg_queue )
  * =====================================================================================
  */
     Chat_msg *
-chat_msg_queue_pop ( Msg_queue *msg_queue )
+chat_msg_queue_pop ( Chat_msg_queue *msg_queue )
 {
     Queue_node *node;
     Chat_msg *msg;
@@ -105,7 +105,7 @@ chat_msg_queue_pop ( Msg_queue *msg_queue )
  * =====================================================================================
  */
     int
-chat_msg_queue_push ( Msg_queue *msg_queue, Chat_msg *msg )
+chat_msg_queue_push ( Chat_msg_queue *msg_queue, Chat_msg *msg )
 {
     Queue_node *node;
 

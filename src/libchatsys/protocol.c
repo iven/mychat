@@ -23,8 +23,8 @@
 #include    "protocol.h"
 #include    "msg_queue.h"
 
-static Msg_queue *msg_queue_in;
-static Msg_queue *msg_queue_out;
+static Chat_msg_queue *msg_queue_in;
+static Chat_msg_queue *msg_queue_out;
 
 /* 
  * ===  FUNCTION  ======================================================================
