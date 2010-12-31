@@ -33,7 +33,7 @@
 process_thread ( void *data )
 {
     Chat_msg *msg;
-    gchar buf[MAX_TEXT_LEN + 1];
+    gchar buf[MAX_TEXT_LEN + 20];
     GtkTextBuffer *text_buffer = GTK_TEXT_BUFFER(data);
     GtkTextIter text_iter;
     while (1) {
@@ -41,9 +41,13 @@ process_thread ( void *data )
         gtk_text_buffer_get_end_iter(text_buffer, &text_iter);
         switch ( msg->type ) {
             case CHAT_MSG_CHAT:                 /* Chat message */
-            case CHAT_MSG_LIST:                 /* List users */
                 sprintf(buf, "%s\n", msg->text);
                 gtk_text_buffer_insert(text_buffer, &text_iter, buf, -1);
+                break;
+            case CHAT_MSG_LIST:                 /* List users */
+                sprintf(buf, "Online Users: %s\n", msg->text);
+                gtk_text_buffer_insert_with_tags_by_name(text_buffer,
+                        &text_iter, buf, -1, "system", NULL);
                 break;
         }               /* -----  end switch  ----- */
         chat_msg_destroy(msg);
@@ -112,7 +116,11 @@ on_delete_event ( GtkWidget *widget, GdkEvent *event, gpointer data )
     static void
 show_welcome_message ( GtkTextBuffer *text_buffer )
 {
-    gtk_text_buffer_set_text(text_buffer, "Welcome to ChatSys 0.1!\nType '/list' for online users.\n", -1);
+    GtkTextIter text_iter;
+    gtk_text_buffer_get_end_iter(text_buffer, &text_iter);
+    gtk_text_buffer_insert_with_tags_by_name(text_buffer, &text_iter, 
+            "Welcome to ChatSys 0.1!\nType '/list' for online users.\n",
+            -1, "system", NULL);
     return ;
 }       /* -----  end of static function show_welcome_message  ----- */
 
@@ -157,10 +165,16 @@ main ( int argc, char *argv[] )
 
     vbox = gtk_vbox_new(FALSE, 0);
     gtk_container_add(GTK_CONTAINER(window), vbox);
+    gtk_container_set_border_width(GTK_CONTAINER(window), 5);
 
     text_view = gtk_text_view_new();
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
     text_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+    gtk_text_buffer_create_tag(text_buffer, "system",
+            "weight", PANGO_WEIGHT_BOLD,
+            "foreground", "blue", NULL);
+    gtk_text_buffer_create_tag(text_buffer, "username",
+            "foreground", "red", NULL);
     gtk_box_pack_start(GTK_BOX(vbox), text_view, TRUE, TRUE, 5);
 
     entry = gtk_entry_new();
