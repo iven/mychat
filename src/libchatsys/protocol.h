@@ -31,12 +31,12 @@ typedef enum chat_type Chat_type;
 int chat_protocol_init ( Chat_type type, int server_port, const char *server_name );
 int chat_protocol_exit ( int my_fd );
 
-int chat_msg_push ( Chat_msg *msg );
-Chat_msg *chat_msg_pop ( void );
+int chat_msg_push ( Chat_msg *msg );            /* Push message to the sending queue */
+Chat_msg *chat_msg_pop ( void );                /* Pop message from the receiving queue */
 
-int chat_client_login ( int fd, const char *username );
-int chat_client_logout ( int fd );
+int chat_client_login ( int fd, const char *username ); /* Send login message to the server */
+int chat_client_logout ( int fd );              /* Send logout message to the server */
 
-int chat_server_main ( int server_fd );
+int chat_server_main ( int server_fd );         /* Main loop used by the server */
 
 #endif   /* ----- #ifndef PROTOCOL_INC  ----- */

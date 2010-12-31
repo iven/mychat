@@ -33,7 +33,7 @@
     static void
 display_prompt ( void )
 {
-    printf(">> ");
+    printf("\033[0;33;49m>> \033[0m");
     fflush(stdout);
     return ;
 }       /* -----  end of static function display_prompt  ----- */
@@ -56,7 +56,7 @@ process_thread ( void )
                 printf("%s\n", msg->text);
                 break;
             case CHAT_MSG_LIST:                 /* List users */
-                printf("\033[0;32;40m[Online users: %s]\033[0m\n", msg->text);
+                printf("\033[0;32;49m[Online users: %s]\033[0m\n", msg->text);
                 break;
         }               /* -----  end switch  ----- */
         chat_msg_destroy(msg);
@@ -126,7 +126,7 @@ main (int argc, char *argv[])
     /*-----------------------------------------------------------------------------
      *  Welcome message.
      *-----------------------------------------------------------------------------*/
-    printf("Welcome to ChatSys 0.1!\n  Type '/list' for online users.\n  Press 'Ctrl+D' for quiting.\n");
+    printf("\033[0;32;49mWelcome to ChatSys 0.1!\n  Type '/list' for online users.\n  Press 'Ctrl+D' for quiting.\033[0m\n");
     display_prompt();
     /*-----------------------------------------------------------------------------
      *  Send login message to server.

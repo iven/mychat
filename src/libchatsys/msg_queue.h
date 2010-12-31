@@ -22,14 +22,15 @@
 #include    "queue.h"
 #include    "event.h"
 
-struct msg_queue {
+struct chat_msg_queue {
     Queue *queue;
     Event *event;
-};               /* ----------  end of struct msg_queue  ---------- */
-typedef struct msg_queue Chat_msg_queue;
+};               /* ----------  end of struct chat_msg_queue  ---------- */
+typedef struct chat_msg_queue Chat_msg_queue;
 
 Chat_msg_queue * chat_msg_queue_new ( void );
 int chat_msg_queue_destroy ( Chat_msg_queue *msg_queue );
+
 Chat_msg * chat_msg_queue_pop ( Chat_msg_queue *msg_queue );
 int chat_msg_queue_push ( Chat_msg_queue *msg_queue, Chat_msg *msg );
 

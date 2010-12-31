@@ -22,6 +22,30 @@
 
 /* 
  * ===  FUNCTION  ======================================================================
+ *         Name:  queue_lock
+ *  Description:  Lock a queue.
+ * =====================================================================================
+ */
+    static int
+queue_lock ( Queue *queue )
+{
+    return event_wait(queue->lock);
+}       /* -----  end of function queue_lock  ----- */
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  queue_unlock
+ *  Description:  Unlock a queue.
+ * =====================================================================================
+ */
+    static int
+queue_unlock ( Queue *queue )
+{
+    return event_post(queue->lock);
+}       /* -----  end of function queue_unlock  ----- */
+
+/* 
+ * ===  FUNCTION  ======================================================================
  *         Name:  queue_new
  *  Description:  Create a new queue.
  * =====================================================================================
@@ -88,7 +112,6 @@ queue_push ( Queue *queue, Queue_node *node )
         queue->head->next = node;
     }
     queue->head = node;                         /* Update queue head */
-    queue->n_nodes++;                           /* Update queue nodes count */
     node->next = NULL;                          /* Next node must be NULL */
     queue_unlock(queue);
     return 0;
@@ -109,34 +132,9 @@ queue_pop ( Queue *queue )
     queue_lock(queue);
     Queue_node *node = queue->tail;
     queue->tail = node->next;
-    queue->n_nodes--;
     queue_unlock(queue);
     return node;
 }       /* -----  end of function queue_pop  ----- */
-
-/* 
- * ===  FUNCTION  ======================================================================
- *         Name:  queue_lock
- *  Description:  Lock a queue.
- * =====================================================================================
- */
-    int
-queue_lock ( Queue *queue )
-{
-    return event_wait(queue->lock);
-}       /* -----  end of function queue_lock  ----- */
-
-/* 
- * ===  FUNCTION  ======================================================================
- *         Name:  queue_unlock
- *  Description:  Unlock a queue.
- * =====================================================================================
- */
-    int
-queue_unlock ( Queue *queue )
-{
-    return event_post(queue->lock);
-}       /* -----  end of function queue_unlock  ----- */
 
 /* 
  * ===  FUNCTION  ======================================================================

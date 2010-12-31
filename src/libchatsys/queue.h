@@ -31,7 +31,6 @@ struct queue {
     Queue_node *head;
     Queue_node *tail;
     Event      *lock;
-    int n_nodes;
 };              /* ----------  end of struct queue  ---------- */
 typedef struct queue Queue;
 
@@ -40,15 +39,12 @@ typedef void (*QUEUE_DESTROY)(void *);
 Queue *queue_new(void);
 int queue_destroy(Queue *queue, QUEUE_DESTROY func);
 
-int queue_empty(Queue *queue);
+int queue_empty(Queue *queue);                  /* Is queue empty? */
 #define queue_foreach(queue, node) \
     for (node = queue->tail; node != NULL; node = node->next)
 
 Queue_node *queue_pop(Queue *queue);
 int queue_push(Queue *queue, Queue_node *node);
-
-int queue_lock (Queue *queue);
-int queue_unlock (Queue *queue);
 
 Queue_node *queue_node_new(void *data);
 int queue_node_destroy(Queue_node *node, QUEUE_DESTROY func);
