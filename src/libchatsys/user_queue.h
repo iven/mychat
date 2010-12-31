@@ -19,10 +19,9 @@
 #ifndef  USER_QUEUE_INC
 #define  USER_QUEUE_INC
 
+#include    "constants.h"
 #include    "queue.h"
 #include    "message.h"
-
-#define MAX_NAME_LEN 256            /*  */
 
 struct chat_user {
     int fd;
@@ -37,8 +36,10 @@ int chat_user_destroy ( Chat_user *user );
 
 Chat_user_queue * chat_user_queue_new ( void );
 int chat_user_queue_destroy ( Chat_user_queue *queue );
+
 int chat_user_queue_add ( Chat_user_queue *queue, Chat_user *user );
 int chat_user_queue_remove ( Chat_user_queue *queue, Chat_user *user );
+
 Chat_user * chat_user_queue_get_from_fd ( Chat_user_queue *queue, int fd );
 int chat_user_queue_send_to_all ( Chat_user_queue *queue, Chat_msg *msg );
 char * chat_user_queue_get_names ( Chat_user_queue *queue );

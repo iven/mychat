@@ -19,7 +19,7 @@
 #ifndef  MESSAGE_INC
 #define  MESSAGE_INC
 
-#define MAX_TEXT_LEN 1024           /*  */
+#include    "constants.h"
 
 enum {
     CHAT_MSG_ERROR,

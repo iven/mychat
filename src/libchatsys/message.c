@@ -30,6 +30,7 @@
 chat_msg_new ( void )
 {
     Chat_msg *msg = (Chat_msg *) calloc(1, sizeof(Chat_msg));
+    msg->version = CHAT_VERSION;
     return msg;
 }       /* -----  end of function chat_msg_new  ----- */
 /* 
