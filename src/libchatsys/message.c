@@ -56,7 +56,7 @@ chat_msg_new_from_msg ( Chat_msg *old_msg )
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  chat_msg_destroy
- *  Description:  
+ *  Description:  Destroy a chat message.
  * =====================================================================================
  */
     int
