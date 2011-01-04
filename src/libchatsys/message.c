@@ -3,7 +3,7 @@
  *
  *       Filename:  message.c
  *
- *    Description:  Implemention of ChatSys PDU parser and formater.
+ *    Description:  Implementation of ChatSys PDU parser and formater.
  *
  *        Version:  1.0
  *        Created:  2010年12月02日 20时07分09秒

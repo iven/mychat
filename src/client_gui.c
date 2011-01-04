@@ -3,7 +3,7 @@
  *
  *       Filename:  client_gui.c
  *
- *    Description:  Implemention of GUI chat client.
+ *    Description:  Implementation of GUI chat client.
  *
  *        Version:  1.0
  *        Created:  2010年12月25日 01时36分46秒

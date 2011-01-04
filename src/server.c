@@ -3,7 +3,7 @@
  *
  *       Filename:  server.c
  *
- *    Description:  Implemention of chat server.
+ *    Description:  Implementation of chat server.
  *
  *        Version:  1.0
  *        Created:  2010年11月19日 18时37分05秒

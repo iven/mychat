@@ -3,7 +3,7 @@
  *
  *       Filename:  queue.c
  *
- *    Description:  Implemention of queue.
+ *    Description:  Implementation of queue.
  *
  *        Version:  1.0
  *        Created:  2010年12月04日 09时34分40秒

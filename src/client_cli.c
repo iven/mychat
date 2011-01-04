@@ -3,7 +3,7 @@
  *
  *       Filename:  client_cli.c
  *
- *    Description:  Implemention of chat client.
+ *    Description:  Implementation of chat client.
  *
  *        Version:  1.0
  *        Created:  2010年11月19日 18时41分32秒

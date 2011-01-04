@@ -3,7 +3,7 @@
  *
  *       Filename:  protocol.c
  *
- *    Description:  Implemention of ChatSys protocol.
+ *    Description:  Implementation of ChatSys protocol.
  *
  *        Version:  1.0
  *        Created:  2010年12月10日 19时54分30秒

@@ -3,7 +3,7 @@
  *
  *       Filename:  user_queue.c
  *
- *    Description:  Implemention of user queue.
+ *    Description:  Implementation of user queue.
  *
  *        Version:  1.0
  *        Created:  2010年12月18日 01时23分43秒

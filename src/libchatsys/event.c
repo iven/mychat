@@ -3,7 +3,7 @@
  *
  *       Filename:  event.c
  *
- *    Description:  Implement of event.
+ *    Description:  Implementation of event.
  *
  *        Version:  1.0
  *        Created:  2010年12月04日 08时18分15秒

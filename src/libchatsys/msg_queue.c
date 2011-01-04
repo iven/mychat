@@ -3,7 +3,7 @@
  *
  *       Filename:  msg_queue.c
  *
- *    Description:  Implemention of message queue.
+ *    Description:  Implementation of message queue.
  *
  *        Version:  1.0
  *        Created:  2010年12月29日 17时31分52秒
