@@ -45,7 +45,6 @@ struct chat_pdu {
     char version:4;
     char type:4;
     char sn;
-    int  fd;
     short len;
     char text[MAX_TEXT_LEN];
 };              /* ----------  end of struct chat_pdu  ---------- */
